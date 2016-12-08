@@ -15,8 +15,7 @@ body .paper {
   height: 1080px;
   position: absolute;
   top: 0;
-  left: 0;
-  transform: translateY(-360px) translateX(0); }
+  left: 0; }
 
 .g {
   position: absolute; }
@@ -58,28 +57,26 @@ body .paper {
   width: 480px;
   height: 360px; }
 
-.g5 {
+.g5, .g6, .g7 {
   top: 720px;
-  left: 0;
-  width: 480px;
   height: 360px; }
+
+.g5 {
+  left: 0;
+  width: 360px; }
 
 .g6 {
-  top: 720px;
-  left: 480px;
-  width: 480px;
-  height: 360px; }
+  left: 360px;
+  width: 360px; }
 
 .g7 {
-  top: 720px;
-  left: 960px;
-  width: 960px;
-  height: 360px; }
+  left: 720px;
+  width: 1200px; }
 
 .g8 {
   top: 0px;
-  left: 960px;
-  width: 960px;
+  left: 720px;
+  width: 1200px;
   height: 720px; }
 
 /*# sourceMappingURL=index.css.map */

@@ -1,5 +1,8 @@
 COLOR_IN = '#95deff'
 COLOR_OUT = '#41c4ff'
+
+COLOR_DEEP = '#0088c5'
+
 BG_COLOR = '#17243C'
 
 class DrawTitle
@@ -48,7 +51,7 @@ class AmountBar extends DrawTitle
       .attr 'class', 'axis axis-y'
       .attr 'transform', "translate(#{@axisy_size}, #{@margin_top})" 
 
-    @draw_title('入库出库分时统计')
+    @draw_title('某品类入库出库分时统计')
     @draw_in_out_amount_bar()
 
   draw_in_out_amount_bar: ->
@@ -124,7 +127,7 @@ class AmountPie extends DrawTitle
       .attr 'height', @height
       .attr 'style', "transform: translate(10px, 10px)"
       
-    @draw_title('当前入库出库比例')
+    @draw_title('某品类当前入库出库比例')
 
     @panel = @svg.append 'g'
       .attr 'transform', "translate(0, #{@margin_top})"
@@ -157,6 +160,101 @@ class AmountPie extends DrawTitle
       .attr 'stroke-width', 2
 
 
+class BalanceAmountPie extends DrawTitle
+  constructor: (@data)->
+    @width = jQuery('.g5').width() - 20
+    @height = jQuery('.g5').height() - 20
+
+    @margin_top = 40
+
+
+  draw: ->
+    @svg = d3.select('.g5').append 'svg'
+      .attr 'width', @width
+      .attr 'height', @height
+      .attr 'style', "transform: translate(10px, 10px)"
+      
+    @draw_title('当前库存构成')
+
+    @panel = @svg.append 'g'
+      .attr 'transform', "translate(0, #{@margin_top})"
+
+    @arc_panel = @panel.append 'g'
+      .attr 'transform', "translate(#{@width / 2}, #{(@height - @margin_top) / 2})"
+
+    @draw_pie()
+
+  draw_pie: ->
+    width = @width * 0.6
+    height = @height * 0.6
+    radius = Math.min(width, height) / 2
+
+    pie = d3.pie()
+      .value (d)-> d.balance_amount
+
+    g = @arc_panel.selectAll('.arc')
+      .data pie @data
+      .enter().append('g').attr('class', 'arc')
+
+    arc = d3.arc()
+      .outerRadius radius
+      .innerRadius radius / 2
+
+    color = d3.scaleLinear()
+      .domain [0, @data.length - 1]
+      .range [COLOR_IN, COLOR_DEEP]
+
+    g.append('path')
+      .attr('d', arc)
+      .attr 'fill', (d, idx)-> color(idx)
+      .attr 'stroke', BG_COLOR
+      .attr 'stroke-width', 2
+
+
+class ChinaMap extends DrawTitle
+  constructor: (@georoot)->
+    @width = jQuery('.g8').width() - 20
+    @height = jQuery('.g8').height() - 20
+
+    @margin_top = 40
+
+  draw: ->
+    @svg = d3.select('.g8').append 'svg'
+      .attr 'width', @width
+      .attr 'height', @height
+      .attr 'style', "transform: translate(10px, 10px)"
+
+    @draw_title('供货地图')
+    @draw_map()
+
+  draw_map: ->
+    width = @width
+    height = @height - @margin_top
+
+    china = @svg.append('g')
+      .attr 'transform', "translate(0, #{@margin_top})"
+
+    projection = d3.geoMercator()
+      .center [107, 37]
+      .scale width * 0.65
+      .translate [width / 2, height / 2]
+
+    path = d3.geoPath projection
+
+    color = d3.scaleLinear()
+      .domain [0, @georoot.features.length - 1]
+      .range [COLOR_IN, COLOR_DEEP]
+
+    provinces = china.selectAll('.province')
+      .data @georoot.features
+      .enter()
+      .append 'path'
+      .attr 'class', 'province'
+      .style 'fill', (d, idx)-> color(idx)
+      .style 'stroke', BG_COLOR
+      .style 'stroke-width', 1
+      .attr 'd', path
+
 jQuery ->
   d3.json 'data/StockRecord.json', (error, _data)->
 
@@ -167,3 +265,17 @@ jQuery ->
 
     new AmountBar(data).draw()
     new AmountPie(data).draw()
+
+jQuery ->
+  d3.json 'data/MaterialBalanceAmount.json', (error, _data)->
+    data = _data.sort (a, b)->
+      b.balance_amount - a.balance_amount
+
+    new BalanceAmountPie(data).draw()
+
+jQuery ->
+  d3.json 'data/china.json', (error, root)->
+    # georoot = topojson.feature toporoot, toporoot.objects.china
+    georoot = root
+
+    new ChinaMap(georoot).draw()

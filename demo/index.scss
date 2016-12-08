@@ -13,13 +13,16 @@ body {
   box-sizing: border-box;
 }
 
+$w: 1920px;
+$h: 1080px;
+
 body .paper {
   background-color: rgba(0, 0, 0, 0.1);
-  width: 1920px;
-  height: 1080px;
+  width: $w;
+  height: $h;
   position: absolute;
   top:0;left:0;
-  transform: translateY(-360px) translateX(0);
+  // transform: translateY(-360px) translateX(0);
 }
 
 .g {
@@ -68,18 +71,26 @@ body .paper {
   top:360px;left:480px;width:480px;height:360px;
 }
 
+.g5, .g6, .g7 {
+  top: $h / 3 * 2;
+  height: $h / 3;
+}
+
 .g5 {
-  top:720px;left:0;width:480px;height:360px;
+  left:0;width:$w / 16 * 3;
 }
 
 .g6 {
-  top:720px;left:480px;width:480px;height:360px;
+  left:$w / 16 * 3;width:$w / 16 * 3;
 }
 
 .g7 {
-  top:720px;left:960px;width:960px;height:360px;
+  left:$w / 16 * 6; width:$w / 16 * 10;
 }
 
 .g8 {
-  top:0px;left:960px;width:960px;height:720px;
+  top:0px;
+  left:$w / 16 * 6;
+  width:$w / 16 * 10;
+  height:720px;
 }
