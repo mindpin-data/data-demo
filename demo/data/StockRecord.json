@@ -1,0 +1,57 @@
+[{
+  "in_amount" : 178,
+  "out_amount" : 211,
+  "balance_amount" : 266
+}, {
+  "in_amount" : 129,
+  "out_amount" : 145,
+  "balance_amount" : 144
+}, {
+  "in_amount" : 235,
+  "out_amount" : 187,
+  "balance_amount" : 203
+}, {
+  "in_amount" : 294,
+  "out_amount" : 107,
+  "balance_amount" : 125
+}, {
+  "in_amount" : 272,
+  "out_amount" : 107,
+  "balance_amount" : 182
+}, {
+  "in_amount" : 231,
+  "out_amount" : 268,
+  "balance_amount" : 292
+}, {
+  "in_amount" : 240,
+  "out_amount" : 140,
+  "balance_amount" : 164
+}, {
+  "in_amount" : 201,
+  "out_amount" : 224,
+  "balance_amount" : 118
+}, {
+  "in_amount" : 268,
+  "out_amount" : 233,
+  "balance_amount" : 280
+}, {
+  "in_amount" : 116,
+  "out_amount" : 166,
+  "balance_amount" : 236
+}, {
+  "in_amount" : 194,
+  "out_amount" : 255,
+  "balance_amount" : 184
+}, {
+  "in_amount" : 148,
+  "out_amount" : 157,
+  "balance_amount" : 207
+}, {
+  "in_amount" : 248,
+  "out_amount" : 217,
+  "balance_amount" : 227
+}, {
+  "in_amount" : 247,
+  "out_amount" : 153,
+  "balance_amount" : 211
+}]

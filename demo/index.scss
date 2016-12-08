@@ -1,0 +1,85 @@
+$text-color: mix(#1A2842, #fff, 40%);
+$title-color: mix(#1A2842, #fff, 20%);
+
+body {
+  background-color: #1A2842;
+  padding: 0;
+  color: white;
+  font-size: 16px;
+  font-family: arial, '微软雅黑';
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body .paper {
+  background-color: rgba(0, 0, 0, 0.1);
+  width: 1920px;
+  height: 1080px;
+  position: absolute;
+  top:0;left:0;
+  transform: translateY(-360px) translateX(0);
+}
+
+.g {
+  position: absolute;
+
+  g.axis {
+    path {
+      stroke: $text-color;
+    }
+
+    .tick line {
+      stroke: $text-color;
+    }
+    .tick text {
+      fill: $text-color;
+      font-size: 16px;
+      font-family: arial, '微软雅黑';
+      // transform: rotate(90deg) translateX(24px) translateY(-13px);
+    }
+  }
+
+  g.title {
+    text {
+      fill: $title-color;
+      font-size: 16px;
+      font-family: arial, '微软雅黑';
+      font-weight: bold;
+    }
+  }
+
+}
+
+.g1 {
+  top:0;left:0;width:480px;height:360px;
+}
+
+.g2 {
+  top:0px;left:480px;width:480px;height:360px;
+}
+
+.g3 {
+  top:360px;left:0;width:480px;height:360px;
+}
+
+.g4 {
+  top:360px;left:480px;width:480px;height:360px;
+}
+
+.g5 {
+  top:720px;left:0;width:480px;height:360px;
+}
+
+.g6 {
+  top:720px;left:480px;width:480px;height:360px;
+}
+
+.g7 {
+  top:720px;left:960px;width:960px;height:360px;
+}
+
+.g8 {
+  top:0px;left:960px;width:960px;height:720px;
+}
