@@ -33,50 +33,62 @@ body .paper {
     font-family: arial, '微软雅黑';
     font-weight: bold; }
 
-.g1 {
-  top: 0;
-  left: 0;
-  width: 480px;
-  height: 360px; }
+@keyframes maprotate {
+  0% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(30deg); }
+  20% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(0); }
+  50% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(-30deg); }
+  75% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(0); }
+  100% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(30deg); } }
+.china-map {
+  position: absolute;
+  left: 200px;
+  top: 40px; }
 
-.g2 {
-  top: 0px;
-  left: 480px;
-  width: 480px;
-  height: 360px; }
+.g11, .g12, .g13 {
+  top: 20px;
+  height: 340px;
+  width: 320px; }
+
+.g12 {
+  left: 320px; }
+
+.g13 {
+  left: 640px; }
 
 .g3 {
-  top: 360px;
+  top: 720px;
+  height: 360px;
   left: 0;
-  width: 480px;
-  height: 360px; }
-
-.g4 {
-  top: 360px;
-  left: 480px;
-  width: 480px;
-  height: 360px; }
+  width: 960px; }
 
 .g5, .g6, .g7 {
   top: 720px;
   height: 360px; }
 
+.g5, .g6 {
+  top: 360px; }
+
 .g5 {
   left: 0;
-  width: 360px; }
+  width: 480px; }
 
 .g6 {
-  left: 360px;
-  width: 360px; }
+  left: 480px;
+  width: 480px; }
 
 .g7 {
-  left: 720px;
-  width: 1200px; }
+  left: 960px;
+  width: 960px; }
 
 .g8 {
-  top: 0px;
-  left: 720px;
-  width: 1200px;
-  height: 720px; }
+  top: 20px;
+  left: 960px;
+  width: 960px;
+  height: 700px; }
 
 /*# sourceMappingURL=index.css.map */

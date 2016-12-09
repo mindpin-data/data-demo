@@ -28,6 +28,10 @@ body .paper {
 .g {
   position: absolute;
 
+  // text {
+  //   fill: 'white'
+  // }
+
   g.axis {
     path {
       stroke: $text-color;
@@ -52,23 +56,50 @@ body .paper {
       font-weight: bold;
     }
   }
-
 }
 
-.g1 {
-  top:0;left:0;width:480px;height:360px;
+@keyframes maprotate {
+  0% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(30deg);
+  }
+  20% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(0);
+  }
+  50% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(-30deg);
+  }
+  75% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(0);
+  }
+  100% {
+    transform: rotateX(30deg) rotateY(0) rotateZ(30deg);
+  }
 }
 
-.g2 {
-  top:0px;left:480px;width:480px;height:360px;
+.china-map {
+  position: absolute;
+  left:200px;
+  top:40px;
+  // transform: rotateX(0) rotateY(0) rotateZ(45deg);
+  // animation: maprotate 15s linear infinite;
+  // transform-origin: 50% 100%;
 }
+
+$pie-width: $w / 16 * 4;
+
+.g11, .g12, .g13 {
+  top:20px;height:340px;
+  width: $w / 6;
+}
+
+.g12 {left: $w / 6}
+.g13 {left: $w / 3}
 
 .g3 {
-  top:360px;left:0;width:480px;height:360px;
-}
-
-.g4 {
-  top:360px;left:480px;width:480px;height:360px;
+  top: $h / 3 * 2;
+  height: $h / 3;
+  left:0;
+  width: $pie-width * 2;
 }
 
 .g5, .g6, .g7 {
@@ -76,21 +107,25 @@ body .paper {
   height: $h / 3;
 }
 
+.g5, .g6 {
+  top: $h / 3;
+}
+
 .g5 {
-  left:0;width:$w / 16 * 3;
+  left:0; width:$pie-width;
 }
 
 .g6 {
-  left:$w / 16 * 3;width:$w / 16 * 3;
+  left:$pie-width; width:$pie-width;
 }
 
 .g7 {
-  left:$w / 16 * 6; width:$w / 16 * 10;
+  left:$pie-width * 2; width: $w - $pie-width * 2;
 }
 
 .g8 {
-  top:0px;
-  left:$w / 16 * 6;
-  width:$w / 16 * 10;
-  height:720px;
+  top:20px;
+  left:$pie-width * 2;
+  width:$pie-width * 2;
+  height:700px;
 }
