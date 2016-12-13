@@ -46,19 +46,22 @@ body .paper {
     transform: rotateX(30deg) rotateY(0) rotateZ(30deg); } }
 .china-map {
   position: absolute;
-  left: 200px;
-  top: 40px; }
+  left: 0;
+  top: 0; }
 
 .g11, .g12, .g13 {
-  top: 20px;
-  height: 340px;
-  width: 320px; }
+  height: 240px;
+  width: 240px;
+  left: 1680px; }
+
+.g11 {
+  top: 0; }
 
 .g12 {
-  left: 320px; }
+  top: 240px; }
 
 .g13 {
-  left: 640px; }
+  top: 480px; }
 
 .g3 {
   top: 720px;
@@ -66,29 +69,27 @@ body .paper {
   left: 0;
   width: 960px; }
 
-.g5, .g6, .g7 {
-  top: 720px;
-  height: 360px; }
-
 .g5, .g6 {
-  top: 360px; }
+  height: 360px;
+  left: 0; }
 
 .g5 {
-  left: 0;
+  top: 0;
   width: 480px; }
 
 .g6 {
-  left: 480px;
+  top: 360px;
   width: 480px; }
 
 .g7 {
-  left: 960px;
-  width: 960px; }
-
-.g8 {
-  top: 20px;
+  top: 720px;
   left: 960px;
   width: 960px;
-  height: 700px; }
+  height: 360px; }
+
+.g8 {
+  left: 480px;
+  width: 1200px;
+  height: 720px; }
 
 /*# sourceMappingURL=index.css.map */

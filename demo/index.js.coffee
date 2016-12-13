@@ -419,11 +419,11 @@ class BalanceAmountPie extends DrawTitle
 
 class ChinaMap extends DrawTitle
   constructor: (@georoot)->
-    @width = jQuery('.g8').width() - 20
+    @width = jQuery('.g8').width()
     @height = jQuery('.g8').height() - 20
 
     @margin_top = 40
-    @margin_left = 200
+    @margin_left = 240
 
   draw: ->
     @svg = d3.select('.g8').append 'svg'
@@ -432,7 +432,7 @@ class ChinaMap extends DrawTitle
       .attr 'style', "transform: translate(10px, 10px)"
 
     @bar_panel = @svg.append 'g'
-      .attr 'transform', "translate(80, #{@margin_top * 2})"
+      .attr 'transform', "translate(160, #{@margin_top * 2})"
 
     @bar_panel.append 'text'
       .style 'fill', 'white'
@@ -456,11 +456,11 @@ class ChinaMap extends DrawTitle
       .attr 'class', 'china-map'
       .attr 'width', width
       .attr 'height', height
-      .attr 'transform', "translate(#{@margin_left}, #{@margin_top})"
+      .style 'transform', "translate(#{@margin_left}px, #{@margin_top}px)"
 
     projection = d3.geoMercator()
-      .center [107, 37]
-      .scale width * 0.85
+      .center [104, 38]
+      .scale width * 0.84
       .translate [width / 2, height / 2]
 
     path = d3.geoPath projection
@@ -504,7 +504,7 @@ class ChinaMap extends DrawTitle
     repeat()
 
   draw_bar: ->
-    width = @margin_left - 100
+    width = @margin_left - 160
     data = @georoot.features
     data = data
       .map (d)-> 
@@ -550,7 +550,7 @@ class ChinaMap extends DrawTitle
     @axis_panel.remove() if @axis_panel
     @axis_panel = @svg.append 'g'
       .attr 'class', 'axis'
-      .attr 'transform', "translate(80, #{@margin_top * 2 + 16})"
+      .attr 'transform', "translate(160, #{@margin_top * 2 + 16})"
     @axis_panel.call d3.axisLeft(yscale)
 
 class TotalStat extends DrawTitle

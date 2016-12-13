@@ -78,8 +78,8 @@ body .paper {
 
 .china-map {
   position: absolute;
-  left:200px;
-  top:40px;
+  left: 0;
+  top: 0;
   // transform: rotateX(0) rotateY(0) rotateZ(45deg);
   // animation: maprotate 15s linear infinite;
   // transform-origin: 50% 100%;
@@ -88,12 +88,14 @@ body .paper {
 $pie-width: $w / 16 * 4;
 
 .g11, .g12, .g13 {
-  top:20px;height:340px;
-  width: $w / 6;
+  height: 240px;
+  width: 240px;
+  left: 1200px + 480px;
 }
 
-.g12 {left: $w / 6}
-.g13 {left: $w / 3}
+.g11 {top: 0;}
+.g12 {top: 240px;}
+.g13 {top: 480px;}
 
 .g3 {
   top: $h / 3 * 2;
@@ -102,30 +104,31 @@ $pie-width: $w / 16 * 4;
   width: $pie-width * 2;
 }
 
-.g5, .g6, .g7 {
-  top: $h / 3 * 2;
-  height: $h / 3;
-}
-
 .g5, .g6 {
-  top: $h / 3;
+  height: $h / 3;
+  // left: $pie-width * 3; 
+  left: 0;
 }
 
 .g5 {
-  left:0; width:$pie-width;
+  top: 0; 
+  width: $pie-width;
 }
 
 .g6 {
-  left:$pie-width; width:$pie-width;
+  top: $h / 3;
+  width: $pie-width;
 }
 
 .g7 {
-  left:$pie-width * 2; width: $w - $pie-width * 2;
+  top: $h / 3 * 2;
+  left: $pie-width * 2; 
+  width: $w - $pie-width * 2;
+  height: $h / 3;
 }
 
 .g8 {
-  top:20px;
-  left:$pie-width * 2;
-  width:$pie-width * 2;
-  height:700px;
+  left:$pie-width;
+  width:1200px;
+  height:720px;
 }
