@@ -49,47 +49,4 @@ body .paper {
   left: 0;
   top: 0; }
 
-.g11, .g12, .g13 {
-  height: 240px;
-  width: 240px;
-  left: 1680px; }
-
-.g11 {
-  top: 0; }
-
-.g12 {
-  top: 240px; }
-
-.g13 {
-  top: 480px; }
-
-.g3 {
-  top: 720px;
-  height: 360px;
-  left: 0;
-  width: 960px; }
-
-.g5, .g6 {
-  height: 360px;
-  left: 0; }
-
-.g5 {
-  top: 0;
-  width: 480px; }
-
-.g6 {
-  top: 360px;
-  width: 480px; }
-
-.g7 {
-  top: 720px;
-  left: 960px;
-  width: 960px;
-  height: 360px; }
-
-.g8 {
-  left: 480px;
-  width: 1200px;
-  height: 720px; }
-
 /*# sourceMappingURL=index.css.map */
