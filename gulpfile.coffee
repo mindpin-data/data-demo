@@ -12,7 +12,17 @@ plumber = require("gulp-plumber")
 
 app =
   src:
-    js:   'demo/charts/*.coffee'
+    js: [
+      "demo/charts/utils.js.coffee"
+      "demo/charts/draw-title.js.coffee"
+      "demo/charts/amount-bar.js.coffee"
+      "demo/charts/amount-bar-2.js.coffee"
+      "demo/charts/amount-pie.js.coffee"
+      "demo/charts/balance-amount-pie.js.coffee"
+      "demo/charts/china-map.js.coffee"
+      "demo/charts/total-stat.js.coffee"
+      "demo/charts/index.js.coffee"
+    ]
     css:  'demo/css/*.scss'
   dist:
     js:   'demo/charts'
@@ -43,12 +53,12 @@ gulp.task 'css', ->
     .pipe gulp.dest(app.dist.css)
 
 gulp.task 'build', [
-  # 'js'
+  'js'
   'css'
 ]
 
 gulp.task 'default', ['build']
 
 gulp.task 'watch', ['build'], ->
-  # gulp.watch app.src.js, ['js']
+  gulp.watch app.src.js, ['js']
   gulp.watch app.src.css, ['css']
