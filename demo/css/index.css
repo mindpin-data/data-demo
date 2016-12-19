@@ -42,7 +42,5 @@ body .paper {
 
 .china-map {
   position: absolute;
-  left: 0;
-  top: 0; }
-
-/*# sourceMappingURL=index.css.map */
+  right: 0;
+  bottom: 0; }
