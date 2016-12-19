@@ -28,9 +28,21 @@ body .paper {
 .g {
   position: absolute;
 
-  // text {
-  //   fill: 'white'
-  // }
+  g.title {
+    rect {
+      fill: rgba(black, 0.1);
+    }
+    text {
+      fill: $title-color;
+      font-size: 16px;
+      font-family: arial, '微软雅黑';
+      font-weight: bold;
+    }
+  }
+
+  svg {
+    background-color: rgba(white, 0.1);
+  }
 
   g.axis {
     path {
@@ -44,37 +56,27 @@ body .paper {
       fill: $text-color;
       font-size: 16px;
       font-family: arial, '微软雅黑';
-      // transform: rotate(90deg) translateX(24px) translateY(-13px);
-    }
-  }
-
-  g.title {
-    text {
-      fill: $title-color;
-      font-size: 16px;
-      font-family: arial, '微软雅黑';
-      font-weight: bold;
     }
   }
 }
 
-@keyframes maprotate {
-  0% {
-    transform: rotateX(30deg) rotateY(0) rotateZ(30deg);
-  }
-  20% {
-    transform: rotateX(30deg) rotateY(0) rotateZ(0);
-  }
-  50% {
-    transform: rotateX(30deg) rotateY(0) rotateZ(-30deg);
-  }
-  75% {
-    transform: rotateX(30deg) rotateY(0) rotateZ(0);
-  }
-  100% {
-    transform: rotateX(30deg) rotateY(0) rotateZ(30deg);
-  }
-}
+// @keyframes maprotate {
+//   0% {
+//     transform: rotateX(30deg) rotateY(0) rotateZ(30deg);
+//   }
+//   20% {
+//     transform: rotateX(30deg) rotateY(0) rotateZ(0);
+//   }
+//   50% {
+//     transform: rotateX(30deg) rotateY(0) rotateZ(-30deg);
+//   }
+//   75% {
+//     transform: rotateX(30deg) rotateY(0) rotateZ(0);
+//   }
+//   100% {
+//     transform: rotateX(30deg) rotateY(0) rotateZ(30deg);
+//   }
+// }
 
 .china-map {
   position: absolute;

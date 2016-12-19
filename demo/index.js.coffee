@@ -1,6 +1,6 @@
 jQuery ->
-  w = 1920 / 24
-  h = 1080 / 24
+  w = jQuery('.paper').width() / 24
+  h = jQuery('.paper').height() / 24
 
   jQuery('.g').each (idx, g)->
     $g = jQuery(g)
@@ -23,7 +23,7 @@ fn1 = ->
       date = new Date(now + idx * 86400000)
       Object.assign {date: format_date(date, "MM-dd")}, d
 
-    new AmountBar(data).draw()
+    new AmountBar(jQuery('.g7'), data).draw()
     new AmountBar2(data).draw()
     new AmountPie(data).draw()
 
@@ -35,7 +35,7 @@ fn2 = ->
     new BalanceAmountPie(data).draw()
 
 fn3 = ->
-  d3.json 'data/china.json', (error, root)->
+  d3.json 'data/china.json?1', (error, root)->
     # georoot = topojson.feature toporoot, toporoot.objects.china
     georoot = root
 
