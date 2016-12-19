@@ -40,7 +40,7 @@ body .paper {
     }
   }
 
-  svg {
+  &.debug svg {
     background-color: rgba(white, 0.1);
   }
 
@@ -57,6 +57,13 @@ body .paper {
       font-size: 16px;
       font-family: arial, '微软雅黑';
     }
+  }
+
+  path.pre-line {
+    // stroke: rgba(#FF7C41, 1);
+    stroke: rgba(#41FF85, 1);
+    fill: transparent;
+    stroke-width: 4;
   }
 }
 

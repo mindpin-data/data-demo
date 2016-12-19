@@ -1,11 +1,13 @@
-window.COLOR_IN = '#95deff'
-window.COLOR_OUT = '#41c4ff'
+window.COLOR_IN = 'rgba(149, 222, 255, 0.9)'
+window.COLOR_OUT = 'rgba(65, 196, 255, 0.9)'
+
+window.COLOR_BALANCE = 'rgba(231, 255, 149, 0.9)'
+window.COLOR_BALANCE_OVERLOAD = 'rgba(243, 157, 119, 0.9)'
+
 window.COLOR_DEEP = '#0088c5'
 window.BG_COLOR = '#17243C'
 window.GOOD_COLOR = '#97FF41'
 window.BAD_COLOR = '#FF7C41'
-# window.PRE_COLOR = '#41FF85'
-window.PRE_COLOR = '#FF7C41'
 
 window.DrawTitle = class DrawTitle
   draw_svg: ->

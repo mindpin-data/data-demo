@@ -26,7 +26,7 @@ body .paper {
     font-size: 16px;
     font-family: arial, '微软雅黑';
     font-weight: bold; }
-  .g svg {
+  .g.debug svg {
     background-color: rgba(255, 255, 255, 0.1); }
   .g g.axis path {
     stroke: #a3a9b3; }
@@ -36,6 +36,10 @@ body .paper {
     fill: #a3a9b3;
     font-size: 16px;
     font-family: arial, '微软雅黑'; }
+  .g path.pre-line {
+    stroke: #41ff85;
+    fill: transparent;
+    stroke-width: 4; }
 
 .china-map {
   position: absolute;

@@ -24,7 +24,7 @@ fn1 = ->
       Object.assign {date: format_date(date, "MM-dd")}, d
 
     new AmountBar(jQuery('.g7'), data).draw()
-    new AmountBar2(data).draw()
+    new AmountBar2(jQuery('.g3'), data).draw()
     new AmountPie(data).draw()
 
 fn2 = ->

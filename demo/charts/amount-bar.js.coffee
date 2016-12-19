@@ -88,11 +88,8 @@ window.AmountBar = class AmountBar extends DrawTitle
 
     @line.append 'path'
       .datum data
-      .attr 'class', 'line'
+      .attr 'class', 'pre-line'
       .attr 'd', line1
-      .style 'stroke', PRE_COLOR
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 4
 
     line2 = d3.line()
       .x (d)-> xscale(d.date) + bar_width / 2
@@ -100,10 +97,7 @@ window.AmountBar = class AmountBar extends DrawTitle
 
     @line.append 'path'
       .datum data
-      .attr 'class', 'line'
+      .attr 'class', 'pre-line'
       .attr 'd', line2
-      .style 'stroke', PRE_COLOR
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 4
       .attr 'transform', (d)->
         "translate(0, #{height / 2})"
