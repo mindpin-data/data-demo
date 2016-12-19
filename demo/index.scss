@@ -2,7 +2,7 @@ $text-color: mix(#1A2842, #fff, 40%);
 $title-color: mix(#1A2842, #fff, 20%);
 
 body {
-  background-color: #1A2842;
+  background-color: #17243C;
   padding: 0;
   color: white;
   font-size: 16px;
@@ -17,7 +17,7 @@ $w: 1920px;
 $h: 1080px;
 
 body .paper {
-  background-color: rgba(0, 0, 0, 0.1);
+  // background-color: rgba(0, 0, 0, 0.1);
   width: $w;
   height: $h;
   position: absolute;

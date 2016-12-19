@@ -1,37 +1,45 @@
 window.ChinaMap = class ChinaMap extends DrawTitle
-  constructor: (@georoot)->
-    @width = jQuery('.g8').width()
-    @height = jQuery('.g8').height() - 20
+  constructor: (@$elm, @georoot)->
+    @bar_width = 125
+    @text_width = 100
+    @bar_top_off = 40
+    @bar_label_height = 16
 
-    @margin_top = 40
-    @margin_left = 240
+    @duration = 5000
 
   draw: ->
-    @svg = d3.select('.g8').append 'svg'
-      .attr 'width', @width
-      .attr 'height', @height
-      .attr 'style', "transform: translate(10px, 10px)"
+    @draw_svg()
+    @draw_title()
+    @draw_gpanel()
 
-    @bar_panel = @svg.append 'g'
-      .attr 'transform', "translate(160, #{@margin_top * 2})"
+    @_d()
+    setInterval =>
+      @_d()
+    , @duration
 
-    @bar_panel.append 'text'
-      .style 'fill', 'white'
-      .text '缺货情况'
+    # @draw_map()
 
-    @draw_title('某品类供货地图')
-    @draw_map()
+  _d: ->
+    @bar_panel.remove() if @bar_panel
+    @bar_panel = @gpanel.append 'g'
+      .attr 'transform', "translate(#{@text_width}, #{@bar_top_off})"
+
+    @axis_panel.remove() if @axis_panel
+    @axis_panel = @gpanel.append 'g'
+      .attr 'class', 'axis'
+      .attr 'transform', "translate(#{@text_width}, #{@bar_top_off + @bar_label_height})"
+
+    @rand_data()
+    @draw_bar()
 
 
   rand_data: ->
-    rand = d3.randomUniform(-4, 10)
-
-    @georoot.features.forEach (d)->
-      d.rand = rand()
+    rand = d3.randomUniform(-40, 100)
+    @georoot.features.forEach (d)-> d.rand = rand()
 
   draw_map: ->
-    width = @width - @margin_left
-    height = @height - @margin_top
+    width = @gwidth
+    height = @gheight
 
     china = d3.select('.g8').append 'svg'
       .attr 'class', 'china-map'
@@ -47,7 +55,7 @@ window.ChinaMap = class ChinaMap extends DrawTitle
     path = d3.geoPath projection
 
     color = d3.scaleLinear()
-      .domain [10, -10]
+      .domain [100, -100]
       .range [GOOD_COLOR, BAD_COLOR]
 
     @rand_data()
@@ -85,15 +93,16 @@ window.ChinaMap = class ChinaMap extends DrawTitle
     repeat()
 
   draw_bar: ->
-    width = @margin_left - 160
+    width = @bar_width
     data = @georoot.features
-    data = data
       .map (d)-> 
         d.rand = - d.rand
         d
       .sort (a, b)-> b.rand - a.rand
+      .filter (d)->
+        d.rand > 0
 
-    data = data[0..10]
+    data = data[0..6]
 
     height = data.length * 32
 
@@ -112,8 +121,12 @@ window.ChinaMap = class ChinaMap extends DrawTitle
     bar_width = yscale.bandwidth()
 
     color = d3.scaleLinear()
-      .domain [10, -10]
+      .domain [100, -40]
       .range [GOOD_COLOR, BAD_COLOR]
+
+    @bar_panel.append 'text'
+      .style 'fill', 'white'
+      .text '缺货预警'
 
     @bar_panel.selectAll('.bar')
       .data data
@@ -122,14 +135,10 @@ window.ChinaMap = class ChinaMap extends DrawTitle
       .attr 'height', bar_width
       .attr 'width', (d)-> 0
       .attr 'fill', (d)-> color -d.rand
-      .attr 'transform', (d)->
-        "translate(0, #{yscale(d.properties.name) + 16})"
+      .attr 'transform', (d)=>
+        "translate(0, #{yscale(d.properties.name) + @bar_label_height})"
       .transition()
-      .duration(3000)
+      .duration @duration / 2
       .attr 'width', (d)-> xscale d3.max [d.rand, 0] 
 
-    @axis_panel.remove() if @axis_panel
-    @axis_panel = @svg.append 'g'
-      .attr 'class', 'axis'
-      .attr 'transform', "translate(160, #{@margin_top * 2 + 16})"
     @axis_panel.call d3.axisLeft(yscale)

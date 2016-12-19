@@ -38,8 +38,7 @@ fn3 = ->
   d3.json 'data/china.json?1', (error, root)->
     # georoot = topojson.feature toporoot, toporoot.objects.china
     georoot = root
-
-    # new ChinaMap(georoot).draw()
+    new ChinaMap(jQuery('.g8'), georoot).draw()
 
 fn4 = ->
   new TotalStat(jQuery('.g11')).draw()
