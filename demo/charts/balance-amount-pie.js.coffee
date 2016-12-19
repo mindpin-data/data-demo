@@ -1,55 +1,54 @@
 window.BalanceAmountPie = class BalanceAmountPie extends DrawTitle
-  constructor: (@data)->
-    @width = jQuery('.g5').width() - 20
-    @height = jQuery('.g5').height() - 20
-
-    @margin_top = 40
-    @margin_left = 160
+  constructor: (@$elm, @data)->
+    @bar_width = 120
+    @text_width = 80
+    @bar_top_off = 40
 
   draw: ->
-    @svg = d3.select('.g5').append 'svg'
-      .attr 'width', @width
-      .attr 'height', @height
-      .attr 'style', "transform: translate(10px, 10px)"
-      
-    @draw_title('当前库存品类构成')
+    @draw_svg()
+    @draw_title()
+    @draw_gpanel()
 
-    @panel = @svg.append 'g'
-      .attr 'transform', "translate(#{@margin_left + 20}, #{@margin_top})"
-
-    @arc_panel = @panel.append 'g'
+    x = @gwidth - (@gwidth - @bar_width - @text_width) / 2
+    @arc_panel = @gpanel.append 'g'
       .attr 'class', 'pie'
-      .attr 'transform', "translate(#{(@width - @margin_left) / 2}, #{(@height - @margin_top) / 2})"
+      .attr 'transform', "translate(#{x}, #{@gheight / 2})"
 
-    @bar_panel = @svg.append 'g'
-      .attr 'transform', "translate(80, #{@margin_top * 2})"
+    @bar_panel = @gpanel.append 'g'
+      .attr 'transform', "translate(#{@text_width}, #{@bar_top_off})"
 
-    @axis_panel = @svg.append 'g'
+    @axis_panel = @gpanel.append 'g'
       .attr 'class', 'axis'
-      .attr 'transform', "translate(80, #{@margin_top * 2})"
+      .attr 'transform', "translate(#{@text_width}, #{@bar_top_off})"
 
     @draw_pie()
     @draw_bar()
 
   draw_pie: ->
-    width = @width * 0.6
-    height = @height * 0.6
-    radius = Math.min(width, height) / 2
+    width = @gwidth - @bar_width - @text_width
+    height = @gheight
+    min = Math.min(width, height) / 2
+    radius = min * 0.8
+    inner_radius = radius * 0.4
 
-    pie = d3.pie()
-      .value (d)-> d.balance_amount
+    pie = d3.pie().value 1
+
+    max_amount = d3.max @data.map (d)-> d.balance_amount
+    scale = d3.scaleSqrt()
+      .domain [0, max_amount]
+      .range [inner_radius, radius]
 
     g = @arc_panel.selectAll('.arc')
       .data pie @data
       .enter().append('g').attr('class', 'arc')
 
     arc = d3.arc()
-      .outerRadius radius
-      .innerRadius radius / 2
+      .outerRadius (d)-> scale d.data.balance_amount
+      .innerRadius inner_radius
 
     color = d3.scaleLinear()
       .domain [0, @data.length - 1]
-      .range [COLOR_IN, COLOR_DEEP]
+      .range [COLOR_BALANCE, COLOR_BALANCE_DEEP]
 
     path = g.append('path')
       .attr('d', arc)
@@ -60,7 +59,7 @@ window.BalanceAmountPie = class BalanceAmountPie extends DrawTitle
     @rotate_pie path
 
   draw_bar: ->
-    width = @margin_left - 60
+    width = @bar_width
     height = @data.length * 32
     data = @data
 
@@ -80,7 +79,7 @@ window.BalanceAmountPie = class BalanceAmountPie extends DrawTitle
 
     color = d3.scaleLinear()
       .domain [0, @data.length - 1]
-      .range [COLOR_IN, COLOR_DEEP]
+      .range [COLOR_BALANCE, COLOR_BALANCE_DEEP]
 
     @bar_panel.selectAll('.bar')
       .data data

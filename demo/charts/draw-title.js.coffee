@@ -4,7 +4,9 @@ window.COLOR_OUT = 'rgba(65, 196, 255, 0.9)'
 window.COLOR_BALANCE = 'rgba(231, 255, 149, 0.9)'
 window.COLOR_BALANCE_OVERLOAD = 'rgba(243, 157, 119, 0.9)'
 
-window.COLOR_DEEP = '#0088c5'
+window.COLOR_BALANCE_DEEP = 'rgba(138, 152, 89, 0.9)'
+
+
 window.BG_COLOR = '#17243C'
 window.GOOD_COLOR = '#97FF41'
 window.BAD_COLOR = '#FF7C41'

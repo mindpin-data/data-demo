@@ -1,25 +1,25 @@
-window.TotalStat = class TotalStat extends DrawTitle
-  constructor: ->
-    @width = jQuery('.g11').width() - 20
-    @height = jQuery('.g11').height() - 20
+class TS extends DrawTitle
+  constructor: (@$elm)->
+    #
 
-    @margin_top = 40
+  _draw: (id)->
+    @draw_svg()
+    @draw_title()
+    @draw_gpanel()
 
+    min = d3.min [@gwidth, @gheight]
+    diameter = min * 0.7
+    d3.select(@$elm[0]).append 'svg'
+      .attr 'id', id
+      .attr 'width', diameter
+      .attr 'height', diameter
+      .style 'position', 'absolute'
+      .style 'left', "#{(@gwidth - diameter) / 2}px"
+      .style 'bottom', "#{(@gheight - diameter) / 2 + 10}px"
+
+window.TotalStat = class TotalStat extends TS
   draw: ->
-    @svg = d3.select('.g11').append 'svg'
-      .attr 'width', @width
-      .attr 'height', @margin_top
-      .attr 'style', "transform: translate(10px, 10px)"
-
-    @draw_title('产品库存量')
-
-    min = d3.min [@width, @height - @margin_top]
-    min = min * 0.6
-    d3.select('.g11').append 'svg'
-      .attr 'id', 'fillgauge1'
-      .attr 'width', min
-      .attr 'height', min
-      .attr 'style', "transform: translate(#{(@width - min) / 2 + 10}px, #{@margin_top + 30}px)"
+    @_draw 'fillgauge1'
 
     config = liquidFillGaugeDefaultSettings()
     config.circleColor = '#CDFF41'
@@ -38,28 +38,9 @@ window.TotalStat = class TotalStat extends DrawTitle
     , 5000
 
 
-window.TotalStat1 = class TotalStat1 extends DrawTitle
-  constructor: ->
-    @width = jQuery('.g12').width() - 20
-    @height = jQuery('.g12').height() - 20
-
-    @margin_top = 40
-
+window.TotalStat1 = class TotalStat1 extends TS
   draw: ->
-    @svg = d3.select('.g12').append 'svg'
-      .attr 'width', @width
-      .attr 'height', @margin_top
-      .attr 'style', "transform: translate(10px, 10px)"
-
-    @draw_title('原料库存量')
-
-    min = d3.min [@width, @height - @margin_top]
-    min = min * 0.6
-    d3.select('.g12').append 'svg'
-      .attr 'id', 'fillgauge2'
-      .attr 'width', min
-      .attr 'height', min
-      .attr 'style', "transform: translate(#{(@width - min) / 2 + 10}px, #{@margin_top + 30}px)"
+    @_draw 'fillgauge2'
 
     config = liquidFillGaugeDefaultSettings()
     config.circleColor = '#FFC141'
@@ -78,28 +59,9 @@ window.TotalStat1 = class TotalStat1 extends DrawTitle
     , 5000
 
 
-window.TotalStat2 = class TotalStat2 extends DrawTitle
-  constructor: ->
-    @width = jQuery('.g13').width() - 20
-    @height = jQuery('.g13').height() - 20
-
-    @margin_top = 40
-
+window.TotalStat2 = class TotalStat2 extends TS
   draw: ->
-    @svg = d3.select('.g13').append 'svg'
-      .attr 'width', @width
-      .attr 'height', @margin_top
-      .attr 'style', "transform: translate(10px, 10px)"
-
-    @draw_title('生产线运转率')
-
-    min = d3.min [@width, @height - @margin_top]
-    min = min * 0.6
-    d3.select('.g13').append 'svg'
-      .attr 'id', 'fillgauge3'
-      .attr 'width', min
-      .attr 'height', min
-      .attr 'style', "transform: translate(#{(@width - min) / 2 + 10}px, #{@margin_top + 30}px)"
+    @_draw 'fillgauge3'
 
     config = liquidFillGaugeDefaultSettings()
     config.circleColor = COLOR_OUT

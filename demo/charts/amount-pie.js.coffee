@@ -1,5 +1,5 @@
 window.AmountPie = class AmountPie extends DrawTitle
-  constructor: (@data)->
+  constructor: (@$elm, @data)->
     @pie_data = [
       {
         label: '入库'
@@ -13,53 +13,51 @@ window.AmountPie = class AmountPie extends DrawTitle
       }
     ]
 
-    @width = jQuery('.g6').width() - 20
-    @height = jQuery('.g6').height() - 20
-
-    @margin_top = 40
-    @margin_left = 160
-
+    @bar_width = 100
+    @text_width = 80
+    @bar_top_off = 40
 
   draw: ->
-    @svg = d3.select('.g6').append 'svg'
-      .attr 'width', @width
-      .attr 'height', @height
-      .attr 'style', "transform: translate(10px, 10px)"
-      
-    @draw_title('某品类当前入库出库比例')
+    @draw_svg()
+    @draw_title()
+    @draw_gpanel()
 
-    @panel = @svg.append 'g'
-      .attr 'transform', "translate(#{@margin_left + 20}, #{@margin_top})"
-
-    @arc_panel = @panel.append 'g'
+    x = @gwidth - (@gwidth - @bar_width - @text_width) / 2
+    @arc_panel = @gpanel.append 'g'
       .attr 'class', 'pie'
-      .attr 'transform', "translate(#{(@width - @margin_left) / 2}, #{(@height - @margin_top) / 2})"
+      .attr 'transform', "translate(#{x}, #{@gheight / 2})"
 
-    @bar_panel = @svg.append 'g'
-      .attr 'transform', "translate(80, #{@margin_top * 2})"
+    @bar_panel = @gpanel.append 'g'
+      .attr 'transform', "translate(#{@text_width}, #{@bar_top_off})"
 
-    @axis_panel = @svg.append 'g'
+    @axis_panel = @gpanel.append 'g'
       .attr 'class', 'axis'
-      .attr 'transform', "translate(80, #{@margin_top * 2})"
+      .attr 'transform', "translate(#{@text_width}, #{@bar_top_off})"
 
     @draw_pie()
     @draw_bar()
 
   draw_pie: ->
-    width = @width * 0.6
-    height = @height * 0.6
-    radius = Math.min(width, height) / 2
+    width = @gwidth - @bar_width - @text_width
+    height = @gheight
+    min = Math.min(width, height) / 2
+    radius = min * 0.8
+    inner_radius = radius * 0.4
 
-    pie = d3.pie()
-      .value (d)-> d.amount
+    pie = d3.pie().value 1
+
+    max_amount = d3.max @pie_data.map (d)-> d.amount
+    scale = d3.scaleSqrt()
+      .domain [0, max_amount]
+      .range [inner_radius, radius]
 
     g = @arc_panel.selectAll('.arc')
       .data pie(@pie_data)
       .enter().append('g').attr('class', 'arc')
 
     arc = d3.arc()
-      .outerRadius radius
-      .innerRadius radius / 2
+      .outerRadius (d)-> scale d.data.amount
+      .innerRadius inner_radius
 
     path = g.append('path')
       .attr('d', arc)
@@ -70,7 +68,7 @@ window.AmountPie = class AmountPie extends DrawTitle
     @rotate_pie path
 
   draw_bar: ->
-    width = @margin_left - 60
+    width = @bar_width
     height = @pie_data.length * 32
     data = @pie_data
 
