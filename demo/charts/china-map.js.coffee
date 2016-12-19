@@ -5,7 +5,10 @@ window.ChinaMap = class ChinaMap extends DrawTitle
     @bar_top_off = 40
     @bar_label_height = 16
 
-    @duration = 5000
+    @duration = 6000
+
+    @amount_rand = d3.randomUniform(100, 200) # 库存
+    @order_rand = d3.randomUniform(50, 300) # 订单
 
   draw: ->
     @draw_svg()
@@ -17,7 +20,6 @@ window.ChinaMap = class ChinaMap extends DrawTitle
       @_d()
     , @duration
 
-    # @draw_map()
 
   _d: ->
     @bar_panel.remove() if @bar_panel
@@ -29,87 +31,44 @@ window.ChinaMap = class ChinaMap extends DrawTitle
       .attr 'class', 'axis'
       .attr 'transform', "translate(#{@text_width}, #{@bar_top_off + @bar_label_height})"
 
+    @china.remove() if @china
+    @china = d3.select(@$elm[0]).append 'svg'
+      .attr 'class', 'china-map'
+      .attr 'width', @gwidth - @bar_width - @text_width
+      .attr 'height', @gheight
+
     @rand_data()
     @draw_bar()
-
+    @draw_map()
 
   rand_data: ->
-    rand = d3.randomUniform(-40, 100)
-    @georoot.features.forEach (d)-> d.rand = rand()
+    @data = @georoot.features.map (d)=>
+      amount = @amount_rand()
+      order = @order_rand()
+      lack = order - amount
 
-  draw_map: ->
-    width = @gwidth
-    height = @gheight
+      Object.assign({
+        amount: amount
+        order: order
+        lack: lack
+      }, d)
 
-    china = d3.select('.g8').append 'svg'
-      .attr 'class', 'china-map'
-      .attr 'width', width
-      .attr 'height', height
-      .style 'transform', "translate(#{@margin_left}px, #{@margin_top}px)"
-
-    projection = d3.geoMercator()
-      .center [104, 38]
-      .scale width * 0.84
-      .translate [width / 2, height / 2]
-
-    path = d3.geoPath projection
-
-    color = d3.scaleLinear()
-      .domain [100, -100]
+    @data = @data
+      .sort (a, b)-> b.lack - a.lack
+    @lack_max = d3.max @data.map (d)-> d.lack
+    @color_gen = d3.scaleLinear()
+      .domain [0, @lack_max]
       .range [GOOD_COLOR, BAD_COLOR]
-
-    @rand_data()
-    provinces = china.selectAll('.province')
-      .data @georoot.features
-      .enter()
-      .append 'path'
-      .attr 'class', 'province'
-      .style 'fill', (d)-> color d.rand
-      .style 'stroke', BG_COLOR
-      .style 'stroke-width', 1
-      .attr 'd', path
-
-    @rand_map provinces, color
-
-  rand_map: (path, color)->
-    n = 0
-
-    repeat = =>
-      @bar_panel.selectAll('.bar').remove()
-
-      @draw_bar()
-      @rand_data()
-      
-      path
-        .each -> n += 1
-        .transition()
-        .duration(20000)
-        .ease d3.easeLinear
-        .style 'fill', (d)-> color d.rand
-        .on 'end', ->
-          n -= 1
-          repeat() if n == 0
-
-    repeat()
 
   draw_bar: ->
     width = @bar_width
-    data = @georoot.features
-      .map (d)-> 
-        d.rand = - d.rand
-        d
-      .sort (a, b)-> b.rand - a.rand
-      .filter (d)->
-        d.rand > 0
-
-    data = data[0..6]
+    data = @data.filter (d)-> d.lack > 0
+    data = data[0..10]
 
     height = data.length * 32
 
-    max = d3.max data.map (d)-> d.rand
-
     xscale = d3.scaleLinear()
-      .domain [0, max]
+      .domain [0, @lack_max]
       .range [0, width]
 
     yscale = d3.scaleBand()
@@ -119,10 +78,6 @@ window.ChinaMap = class ChinaMap extends DrawTitle
       .paddingOuter(0.2)
 
     bar_width = yscale.bandwidth()
-
-    color = d3.scaleLinear()
-      .domain [100, -40]
-      .range [GOOD_COLOR, BAD_COLOR]
 
     @bar_panel.append 'text'
       .style 'fill', 'white'
@@ -134,11 +89,65 @@ window.ChinaMap = class ChinaMap extends DrawTitle
       .attr 'class', 'bar'
       .attr 'height', bar_width
       .attr 'width', (d)-> 0
-      .attr 'fill', (d)-> color -d.rand
+      .attr 'fill', (d)=> @color_gen(d.lack)
       .attr 'transform', (d)=>
         "translate(0, #{yscale(d.properties.name) + @bar_label_height})"
       .transition()
       .duration @duration / 2
-      .attr 'width', (d)-> xscale d3.max [d.rand, 0] 
+      .attr 'width', (d)-> xscale d.lack
 
     @axis_panel.call d3.axisLeft(yscale)
+
+  draw_map: ->
+    width = @gwidth - @bar_width - @text_width
+    height = @gheight
+
+    data = @data.map (d, idx)->
+      d.lack1 = 0
+      d.lack1 = d.lack if idx < 10
+      d
+
+    projection = d3.geoMercator()
+      .center [104, 38]
+      .scale width * 0.9
+      .translate [width / 2, height / 2]
+
+    path = d3.geoPath projection
+
+    scale = d3.scaleSqrt()
+      .domain [0, @lack_max]
+      .range [0, 30]
+
+    provinces = @china.selectAll('.province')
+      .data data
+      .enter()
+      .append 'path'
+      .attr 'class', 'province'
+      .style 'fill', (d)=>
+        # return @color_gen(d.lack1) if d.lack1 > 0
+        return 'transparent'
+      .style 'stroke', COLOR_IN
+      .style 'stroke-width', 3
+      .attr 'd', path
+
+    data1 = data.filter (x)-> x.lack1 > 0
+    data1 = data1.map (d)->
+      d.centroid = path.centroid(d)
+      d
+
+    points = @china.selectAll('.point')
+      .data data1
+      .enter()
+      .append 'circle'
+      .attr 'class', 'point'
+      .style 'fill', BAD_COLOR
+      .style 'opacity', '0.7'
+      .attr 'cx', (d)->
+        d.centroid[0]
+      .attr 'cy', (d)->
+        d.centroid[1]
+      .attr 'r', 0
+      .transition()
+      .duration @duration / 2
+      .attr 'r', (d)->
+        scale d.lack1
