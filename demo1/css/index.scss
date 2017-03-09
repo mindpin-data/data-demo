@@ -13,10 +13,18 @@ body {
 
 * { box-sizing: border-box; }
 
+.paper {
+  background-color: rgba(black, 0.1);
+}
+
 .tile {
   background-color: rgba(white, 0.1);
   position: absolute;
 }
 .tile:nth-child(even) {
   background-color: rgba(white, 0.2);
+}
+
+.tile.nbg {
+  background-color: transparent;
 }

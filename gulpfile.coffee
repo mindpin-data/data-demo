@@ -31,7 +31,9 @@ app =
   src1:
     js: [
       "demo1/js/utils/date.js.coffee"
+
       "demo1/js/base.js.coffee"
+      "demo1/js/graphs/*.js.coffee"
       "demo1/js/loader.js.coffee"
     ]
     css:  'demo1/css/*.scss'

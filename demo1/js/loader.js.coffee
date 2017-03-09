@@ -1,2 +1,2 @@
 jQuery ->
-  BaseTile.init()
+  BaseTile.paper_init()

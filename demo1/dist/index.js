@@ -26,7 +26,7 @@
 }).call(this);
 
 (function() {
-  var BaseTile;
+  var BaseTile, Graph, Graphs;
 
   window.COLOR_IN = 'rgba(149, 222, 255, 0.9)';
 
@@ -44,56 +44,144 @@
 
   window.BAD_COLOR = '#FF7C41';
 
-  window.BaseTile = BaseTile = (function() {
-    function BaseTile() {}
+  Graphs = {};
 
-    BaseTile.init = function() {
-      var $root, r;
+  window.BaseTile = BaseTile = (function() {
+    BaseTile.register = function(name, klass) {
+      return Graphs[name] = klass;
+    };
+
+    BaseTile.paper_init = function() {
+      var $root;
       $root = jQuery('body > .paper');
       $root.css({
         position: 'relative',
         width: 1920,
         height: 1080
       });
-      r = function($tile, $parent) {
-        var offb, offl, offr, offt, ph, pw, ref, th, tl, tt, tw;
-        ref = $tile.data('layout'), tl = ref[0], tt = ref[1], tw = ref[2], th = ref[3];
-        offl = parseInt($parent.css('padding-left'));
-        offt = parseInt($parent.css('padding-top'));
-        offr = parseInt($parent.css('padding-right'));
-        offb = parseInt($parent.css('padding-bottom'));
-        pw = $parent.width();
-        ph = $parent.height();
-        $tile.css({
-          left: pw / 24 * tl + offl,
-          top: ph / 24 * tt + offt,
-          width: pw / 24 * tw,
-          height: ph / 24 * th
-        });
-        return $tile.find('> .tile').each(function(idx, dom) {
-          return r(jQuery(dom), $tile);
-        });
-      };
       return $root.find('> .tile').each(function(idx, dom) {
-        return r(jQuery(dom), $root);
+        var tile;
+        tile = new BaseTile(jQuery(dom), $root);
+        return tile.init();
       });
     };
 
-    BaseTile.prototype.draw_svg = function() {
-      this.width = this.$elm.width();
-      this.height = this.$elm.height();
-      return this.svg = d3.select(this.$elm[0]).append('svg').attr('width', this.width).attr('height', this.height);
+    function BaseTile($tile, $parent) {
+      this.$tile = $tile;
+      this.$parent = $parent;
+      this.graph_name = this.$tile.data('g');
+    }
+
+    BaseTile.prototype.init = function() {
+      this.init_layout();
+      if (this.graph_name != null) {
+        return this.draw();
+      }
+    };
+
+    BaseTile.prototype.init_layout = function() {
+      var offb, offl, offr, offt, ph, pw, ref, th, tl, tt, tw;
+      ref = this.$tile.data('layout'), tl = ref[0], tt = ref[1], tw = ref[2], th = ref[3];
+      offl = parseInt(this.$parent.css('padding-left'));
+      offt = parseInt(this.$parent.css('padding-top'));
+      offr = parseInt(this.$parent.css('padding-right'));
+      offb = parseInt(this.$parent.css('padding-bottom'));
+      pw = this.$parent.width();
+      ph = this.$parent.height();
+      this.$tile.css({
+        left: pw / 24 * tl + offl,
+        top: ph / 24 * tt + offt,
+        width: pw / 24 * tw,
+        height: ph / 24 * th
+      });
+      return this.$tile.find('> .tile').each((function(_this) {
+        return function(idx, dom) {
+          var tile;
+          tile = new BaseTile(jQuery(dom), _this.$tile);
+          return tile.init();
+        };
+      })(this));
+    };
+
+    BaseTile.prototype.draw = function() {
+      var graph;
+      console.log('绘制', this.graph_name);
+      graph = Graphs[this.graph_name];
+      if (graph == null) {
+        console.log(this.graph_name, '未注册');
+        return;
+      }
+      return new graph(this).draw();
     };
 
     return BaseTile;
 
   })();
 
+  window.Graph = Graph = (function() {
+    function Graph(tile1) {
+      this.tile = tile1;
+      this.$tile = this.tile.$tile;
+      this.width = this.$tile.width();
+      this.height = this.$tile.height();
+    }
+
+    Graph.prototype.draw_svg = function() {
+      return d3.select(this.$tile[0]).append('svg').attr('width', this.width).attr('height', this.height);
+    };
+
+    Graph.prototype.draw = function() {
+      return console.log('绘图方法未实现');
+    };
+
+    return Graph;
+
+  })();
+
+}).call(this);
+
+(function() {
+  var PageTitle,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  PageTitle = (function(superClass) {
+    extend(PageTitle, superClass);
+
+    function PageTitle() {
+      return PageTitle.__super__.constructor.apply(this, arguments);
+    }
+
+    PageTitle.prototype.draw = function() {
+      this.svg = this.draw_svg();
+      this.draw_title();
+      return this.draw_points();
+    };
+
+    PageTitle.prototype.draw_title = function() {
+      var size, title;
+      title = this.svg.append('g');
+      size = 60;
+      return title.append('text').attr('x', 70 + 30).attr('y', 10 + size / 2).attr('dy', '.33em').text('一带一路国家销售情况监控').style('font-size', size).style('fill', '#aebbcb');
+    };
+
+    PageTitle.prototype.draw_points = function() {
+      var points;
+      points = this.svg.append('g');
+      return points.append('image').attr('href', 'img/title-points.png').attr('width', 60).attr('height', 60).attr('x', 10).attr('y', 10).style('opacity', '0.5');
+    };
+
+    return PageTitle;
+
+  })(Graph);
+
+  BaseTile.register('title', PageTitle);
+
 }).call(this);
 
 (function() {
   jQuery(function() {
-    return BaseTile.init();
+    return BaseTile.paper_init();
   });
 
 }).call(this);
