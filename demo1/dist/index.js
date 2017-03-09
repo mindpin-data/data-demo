@@ -141,6 +141,222 @@
 }).call(this);
 
 (function() {
+  var AreasBar,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  AreasBar = (function(superClass) {
+    extend(AreasBar, superClass);
+
+    function AreasBar() {
+      return AreasBar.__super__.constructor.apply(this, arguments);
+    }
+
+    AreasBar.prototype.draw = function() {
+      this.svg = this.draw_svg();
+      this.make_defs();
+      return this.draw_flags();
+    };
+
+    AreasBar.prototype.make_defs = function() {
+      var defs, lg;
+      defs = this.svg.append('defs');
+      lg = defs.append('linearGradient').attr('id', 'areas-bar-linear').attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '0%');
+      lg.append('stop').attr('offset', '0%').attr('stop-color', '#7184a3');
+      return lg.append('stop').attr('offset', '100%').attr('stop-color', '#f9f9f7');
+    };
+
+    AreasBar.prototype.draw_flags = function() {
+      var amount, amounts, bar, bh, bw, f, farr, flag, flags, h, i, idx, len, max, names, offl, results, text, text1, th, th1, w;
+      flags = this.svg.append('g');
+      farr = ['xinjiapo', 'yindu', 'yuenan', 'malai', 'yinni'];
+      amounts = [6324210, 6004324, 5132828, 4078910, 3876152];
+      names = ['新加坡', '印度', '越南', '马来西亚', '印尼'];
+      max = 6424210;
+      h = this.height / 5;
+      w = this.width * 0.8;
+      results = [];
+      for (idx = i = 0, len = farr.length; i < len; idx = ++i) {
+        f = farr[idx];
+        flag = flags.append('image').attr('href', "img/" + f + ".png").attr('height', h - 30).attr('x', 0).attr('y', h * idx + 30);
+        offl = 90;
+        amount = amounts[idx];
+        bh = h - 40;
+        bw = w * (amount / max);
+        bar = flags.append('rect').attr('fill', 'url(#areas-bar-linear)').attr('width', bw).attr('height', bh).attr('x', offl).attr('y', h * idx + 30 + 5);
+        th = 24;
+        text = flags.append('text').attr('fill', '#011224').attr('x', offl + 5).attr('y', h * idx + 30 + 5 + bh / 2).attr('dy', '.33em').style('font-size', th).text(names[idx]);
+        th1 = 30;
+        results.push(text1 = flags.append('text').attr('fill', '#011224').attr('text-anchor', 'end').attr('x', offl + bw - 5).attr('y', h * idx + 30 + 5 + bh / 2).attr('dy', '.33em').style('font-size', th1).style('font-weight', 'bold').text(amount));
+      }
+      return results;
+    };
+
+    return AreasBar;
+
+  })(Graph);
+
+  BaseTile.register('areas-bar', AreasBar);
+
+}).call(this);
+
+(function() {
+  var LineChart,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  LineChart = (function(superClass) {
+    extend(LineChart, superClass);
+
+    function LineChart() {
+      return LineChart.__super__.constructor.apply(this, arguments);
+    }
+
+    LineChart.prototype.draw = function() {
+      this.svg = this.draw_svg();
+      this.data0 = [0, 35, 100, 140];
+      this.data1 = [0, 30, 60, 80, 110, 140];
+      this.h = this.height - 40;
+      this.w = this.width - 60;
+      this.gap = (this.w - 30) / 5;
+      this.c1 = 'rgb(205, 255, 65)';
+      this.c2 = 'rgb(60, 180, 236)';
+      this.xscale = d3.scaleLinear().domain([0, 5]).range([0, this.w]);
+      this.yscale = d3.scaleLinear().domain([0, 180]).range([this.h, 0]);
+      this.make_defs();
+      this.draw_axis();
+      return this.draw_lines();
+    };
+
+    LineChart.prototype.make_defs = function() {
+      var defs, lg;
+      defs = this.svg.append('defs');
+      lg = defs.append('linearGradient').attr('id', 'line-chart-linear1').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
+      lg.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(205, 255, 65, 0.5)');
+      lg.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(205, 255, 65, 0.05)');
+      lg = defs.append('linearGradient').attr('id', 'line-chart-linear2').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
+      lg.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(60, 180, 236, 0.5)');
+      return lg.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(60, 180, 236, 0.05)');
+    };
+
+    LineChart.prototype.draw_lines = function() {
+      var arealine1, arealine2, d, i, idx, j, len, len1, line1, panel, ref, ref1, results;
+      panel = this.svg.append('g').attr('transform', "translate(40, 10)");
+      line1 = d3.line().x((function(_this) {
+        return function(d, idx) {
+          return _this.xscale(idx);
+        };
+      })(this)).y((function(_this) {
+        return function(d) {
+          return _this.yscale(d);
+        };
+      })(this));
+      arealine1 = d3.line().x((function(_this) {
+        return function(d, idx) {
+          if (idx === 0) {
+            return _this.xscale(3);
+          } else if (idx === 1) {
+            return _this.xscale(0);
+          } else {
+            return _this.xscale(idx - 2);
+          }
+        };
+      })(this)).y((function(_this) {
+        return function(d, idx) {
+          return _this.yscale(d);
+        };
+      })(this));
+      arealine2 = d3.line().x((function(_this) {
+        return function(d, idx) {
+          if (idx === 0) {
+            return _this.xscale(5);
+          } else if (idx === 1) {
+            return _this.xscale(0);
+          } else {
+            return _this.xscale(idx - 2);
+          }
+        };
+      })(this)).y((function(_this) {
+        return function(d, idx) {
+          return _this.yscale(d);
+        };
+      })(this));
+      panel.append('path').datum([0, 0].concat(this.data0)).attr('class', 'pre-line').attr('d', arealine1).style('fill', 'url(#line-chart-linear1)');
+      panel.append('path').datum(this.data0).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c1).style('fill', 'transparent').style('stroke-width', 2);
+      ref = this.data0;
+      for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
+        d = ref[idx];
+        panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c1);
+      }
+      panel.append('path').datum([0, 0].concat(this.data1)).attr('class', 'pre-line').attr('d', arealine2).style('fill', 'url(#line-chart-linear2)');
+      panel.append('path').datum(this.data1).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c2).style('fill', 'transparent').style('stroke-width', 2);
+      ref1 = this.data1;
+      results = [];
+      for (idx = j = 0, len1 = ref1.length; j < len1; idx = ++j) {
+        d = ref1[idx];
+        results.push(panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c2));
+      }
+      return results;
+    };
+
+    LineChart.prototype.draw_axis = function() {
+      var axisx, axisy;
+      axisx = this.svg.append('g').attr('class', 'axis axis-x').attr('transform', "translate(" + 40 + ", " + (10 + this.h) + ")");
+      axisy = this.svg.append('g').attr('class', 'axis axis-y').attr('transform', "translate(" + 40 + ", " + 10 + ")");
+      axisx.call(d3.axisBottom(this.xscale).tickValues([0, 1, 2, 3, 4, 5]).tickFormat(function(d, idx) {
+        if (idx === 0) {
+          return '';
+        }
+        return (idx * 2) + "月";
+      }));
+      return axisy.call(d3.axisLeft(this.yscale).tickValues([0, 30, 60, 90, 120, 150, 180])).selectAll('.tick line').attr('x1', this.w);
+    };
+
+    return LineChart;
+
+  })(Graph);
+
+  BaseTile.register('line-chart', LineChart);
+
+}).call(this);
+
+(function() {
+  var LineChartTitle,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  LineChartTitle = (function(superClass) {
+    extend(LineChartTitle, superClass);
+
+    function LineChartTitle() {
+      return LineChartTitle.__super__.constructor.apply(this, arguments);
+    }
+
+    LineChartTitle.prototype.draw = function() {
+      this.svg = this.draw_svg();
+      return this.draw_texts();
+    };
+
+    LineChartTitle.prototype.draw_texts = function() {
+      var size, texts;
+      texts = this.svg.append('g').style('transform', 'translate(0px, 0px)');
+      size = 20;
+      texts.append('text').attr('x', 10).attr('y', this.height / 2).attr('dy', '.33em').text('销量对比（单位：万）').style('font-size', size).style('fill', '#ffffff');
+      texts.append('rect').attr('x', 250).attr('y', this.height / 2 - 7).attr('width', 30).attr('height', 15).style('fill', 'rgb(205, 255, 65)');
+      texts.append('text').attr('x', 290).attr('y', this.height / 2).attr('dy', '.33em').text('当前销量').style('font-size', size).style('fill', '#ffffff');
+      texts.append('rect').attr('x', 390).attr('y', this.height / 2 - 7).attr('width', 30).attr('height', 15).style('fill', 'rgb(60, 180, 236)');
+      return texts.append('text').attr('x', 430).attr('y', this.height / 2).attr('dy', '.33em').text('历史销量').style('font-size', size).style('fill', '#ffffff');
+    };
+
+    return LineChartTitle;
+
+  })(Graph);
+
+  BaseTile.register('line-chart-title', LineChartTitle);
+
+}).call(this);
+
+(function() {
   var OneArea,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;

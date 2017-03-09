@@ -28,3 +28,23 @@ body {
 .tile.nbg {
   background-color: transparent;
 }
+
+$text-color: rgba(white, 0.5);
+.axis {
+  path {
+    stroke: $text-color;
+  }
+
+  .tick line {
+    stroke: $text-color;
+  }
+  .tick text {
+    fill: $text-color;
+    font-size: 16px;
+    font-family: arial, '微软雅黑';
+  }
+}
+
+g text {
+  font-family: arial, '微软雅黑';
+}

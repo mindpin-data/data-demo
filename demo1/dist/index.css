@@ -21,3 +21,15 @@ body {
 
 .tile.nbg {
   background-color: transparent; }
+
+.axis path {
+  stroke: rgba(255, 255, 255, 0.5); }
+.axis .tick line {
+  stroke: rgba(255, 255, 255, 0.5); }
+.axis .tick text {
+  fill: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  font-family: arial, '微软雅黑'; }
+
+g text {
+  font-family: arial, '微软雅黑'; }
