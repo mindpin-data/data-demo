@@ -453,7 +453,7 @@
 
     PathMap.prototype.draw = function() {
       this.svg = this.draw_svg();
-      this.areas = ['THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN', 'KAZ', 'UKR', 'TUR'];
+      this.areas = ['THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN', 'MMR', 'KAZ', 'UKR', 'TUR'];
       return this.load_data();
     };
 
@@ -475,10 +475,13 @@
       this.projection = d3.geoMercator().center([80, 26]).scale(this.width * 0.5).translate([this.width / 2, this.height / 2]);
       this.path = d3.geoPath(this.projection);
       map = this.svg.append('g');
-      return countries = map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', 'rgba(136, 204, 236, 1)').style('stroke-width', 2).style('fill', (function(_this) {
+      return countries = map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', 'rgba(120, 180, 208, 1)').style('stroke-width', 2).style('fill', (function(_this) {
         return function(d) {
           if (d.id === 'CHN') {
             return 'rgba(136, 204, 236, 0.6)';
+          }
+          if (d.id === 'MMR') {
+            return 'rgba(255, 216, 40, 1)';
           }
           if (_this.areas.indexOf(d.id) > -1) {
             return 'rgba(136, 204, 236, 0.4)';
@@ -502,6 +505,7 @@
           ref2 = this.path.centroid(feature), x = ref2[0], y = ref2[1];
           points.append('line').attr('class', 'running').attr('x1', x0).attr('y1', y0).attr('x2', x).attr('y2', y).style('stroke', 'rgb(255, 132, 65)').style('stroke-width', 4).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
           points.append('circle').attr('class', 'running').attr('cx', x).attr('cy', y).attr('fill', 'rgb(255, 193, 65)');
+          points.append('image').attr('href', 'img/mapicon1.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
         }
       }
       return points.append('circle').attr('cx', x0).attr('cy', y0).attr('r', 16).attr('fill', 'rgb(255, 193, 65)');

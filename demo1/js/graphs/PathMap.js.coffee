@@ -5,6 +5,7 @@ class PathMap extends Graph
     @areas = [
       'THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN'
       # 'MMR', 'LAO', 'KHM', 'NPL'
+      'MMR'
       'KAZ', 'UKR', 'TUR'
     ]
 
@@ -36,10 +37,12 @@ class PathMap extends Graph
       .append 'path'
       .attr 'class', 'country'
       .attr 'd', @path
-      .style 'stroke', 'rgba(136, 204, 236, 1)'
+      # .style 'stroke', 'rgba(136, 204, 236, 1)'
+      .style 'stroke', 'rgba(120, 180, 208, 1)'
       .style 'stroke-width', 2
       .style 'fill', (d)=>
         return 'rgba(136, 204, 236, 0.6)' if d.id == 'CHN'
+        return 'rgba(255, 216, 40, 1)' if d.id == 'MMR'
         return 'rgba(136, 204, 236, 0.4)' if @areas.indexOf(d.id) > -1
         return 'rgba(136, 204, 236, 0.1)'
 
@@ -80,6 +83,13 @@ class PathMap extends Graph
           # .style 'r', 8
           .attr 'fill', 'rgb(255, 193, 65)'
 
+        points.append 'image'
+          .attr 'href', 'img/mapicon1.png'
+          .attr 'x', x
+          .attr 'y', y
+          .style 'transform', 'translate(-30px, -50px)'
+          .attr 'width', 60
+          .attr 'height', 60
 
     points.append 'circle'
       .attr 'cx', x0
