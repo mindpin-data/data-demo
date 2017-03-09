@@ -141,6 +141,50 @@
 }).call(this);
 
 (function() {
+  var OneArea,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  OneArea = (function(superClass) {
+    extend(OneArea, superClass);
+
+    function OneArea() {
+      return OneArea.__super__.constructor.apply(this, arguments);
+    }
+
+    OneArea.prototype.draw = function() {
+      this.svg = this.draw_svg();
+      this.draw_flag();
+      return this.draw_texts();
+    };
+
+    OneArea.prototype.draw_flag = function() {
+      var flag;
+      flag = this.svg.append('g');
+      return flag.append('image').attr('href', 'img/taiguo.png').attr('height', this.height - 60).attr('x', 0).attr('y', 30);
+    };
+
+    OneArea.prototype.draw_texts = function() {
+      var size, size1, size2, texts;
+      texts = this.svg.append('g').style('transform', 'translate(260px, 0px)');
+      size = 40;
+      texts.append('text').attr('x', 0).attr('y', size / 2 + 10).attr('dy', '.33em').text('泰国销量').style('font-size', size).style('fill', '#ffffff');
+      size1 = 50;
+      texts.append('text').attr('x', 0).attr('y', size / 2 + size + 40).attr('dy', '.33em').text('2817109').style('font-size', size1).style('fill', '#ffff05');
+      size2 = 40;
+      texts.append('text').attr('x', 0).attr('y', size / 2 + size + 34 + size1 + 30).attr('dy', '.33em').text('同比 14.3%').style('font-size', size2).style('fill', '#ffffff');
+      return texts.append('image').attr('x', 215).attr('y', size / 2 + size + 34 + size1 + 30 - size2 / 2).attr('href', 'img/upicon1.png').attr('height', size2);
+    };
+
+    return OneArea;
+
+  })(Graph);
+
+  BaseTile.register('one-area', OneArea);
+
+}).call(this);
+
+(function() {
   var PageTitle,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;

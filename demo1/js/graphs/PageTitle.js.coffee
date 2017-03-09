@@ -14,7 +14,6 @@ class PageTitle extends Graph
       .attr 'y', 10 + size / 2
       .attr 'dy', '.33em'
       .text '一带一路国家销售情况监控'
-
       .style 'font-size', size
       .style 'fill', '#aebbcb'
 
