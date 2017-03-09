@@ -55,7 +55,9 @@
       var $root;
       $root = jQuery('body > .paper');
       $root.css({
-        position: 'relative',
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: 1920,
         height: 1080
       });
