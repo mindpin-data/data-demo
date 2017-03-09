@@ -440,6 +440,82 @@
 }).call(this);
 
 (function() {
+  var PathMap,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  PathMap = (function(superClass) {
+    extend(PathMap, superClass);
+
+    function PathMap() {
+      return PathMap.__super__.constructor.apply(this, arguments);
+    }
+
+    PathMap.prototype.draw = function() {
+      this.svg = this.draw_svg();
+      this.areas = ['THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN', 'KAZ', 'UKR', 'TUR'];
+      return this.load_data();
+    };
+
+    PathMap.prototype.load_data = function() {
+      return d3.json('data/world-countries.json?1', (function(_this) {
+        return function(error, _data) {
+          _this.features = _data.features;
+          console.log(_this.features.map(function(x) {
+            return x.id;
+          }));
+          _this.draw_map();
+          return _this.draw_running_lines();
+        };
+      })(this));
+    };
+
+    PathMap.prototype.draw_map = function() {
+      var countries, map;
+      this.projection = d3.geoMercator().center([80, 26]).scale(this.width * 0.5).translate([this.width / 2, this.height / 2]);
+      this.path = d3.geoPath(this.projection);
+      map = this.svg.append('g');
+      return countries = map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', 'rgba(136, 204, 236, 1)').style('stroke-width', 2).style('fill', (function(_this) {
+        return function(d) {
+          if (d.id === 'CHN') {
+            return 'rgba(136, 204, 236, 0.6)';
+          }
+          if (_this.areas.indexOf(d.id) > -1) {
+            return 'rgba(136, 204, 236, 0.4)';
+          }
+          return 'rgba(136, 204, 236, 0.1)';
+        };
+      })(this));
+    };
+
+    PathMap.prototype.draw_running_lines = function() {
+      var area, feature, i, len, points, ref, ref1, ref2, x, x0, y, y0;
+      points = this.svg.append('g');
+      ref = this.projection([106.71, 26.57]), x0 = ref[0], y0 = ref[1];
+      ref1 = this.areas;
+      for (i = 0, len = ref1.length; i < len; i++) {
+        area = ref1[i];
+        feature = this.features.filter(function(x) {
+          return x.id === area;
+        })[0];
+        if (feature) {
+          ref2 = this.path.centroid(feature), x = ref2[0], y = ref2[1];
+          points.append('line').attr('class', 'running').attr('x1', x0).attr('y1', y0).attr('x2', x).attr('y2', y).style('stroke', 'rgb(255, 132, 65)').style('stroke-width', 4).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
+          points.append('circle').attr('class', 'running').attr('cx', x).attr('cy', y).attr('fill', 'rgb(255, 193, 65)');
+        }
+      }
+      return points.append('circle').attr('cx', x0).attr('cy', y0).attr('r', 16).attr('fill', 'rgb(255, 193, 65)');
+    };
+
+    return PathMap;
+
+  })(Graph);
+
+  BaseTile.register('path-map', PathMap);
+
+}).call(this);
+
+(function() {
   jQuery(function() {
     return BaseTile.paper_init();
   });

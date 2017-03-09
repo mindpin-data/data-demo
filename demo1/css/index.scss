@@ -48,3 +48,33 @@ $text-color: rgba(white, 0.5);
 g text {
   font-family: arial, '微软雅黑';
 }
+
+@keyframes running {
+  from {stroke-dashoffset: 6000;}
+  to {stroke-dashoffset: 0;}
+}
+
+line.running {
+  animation-name: running;
+  animation-duration: 120s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes circlerunning {
+  from {
+    r: 8;
+    opacity: 1;
+  }
+  to {
+    r: 24;
+    opacity: 0.1;
+  }
+}
+
+circle.running {
+  animation-name: circlerunning;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
