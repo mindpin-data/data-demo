@@ -2,3 +2,5 @@ raw.md
 .sass-cache
 design1.md
 node_modules
+.DS_Store
+npm-debug.log

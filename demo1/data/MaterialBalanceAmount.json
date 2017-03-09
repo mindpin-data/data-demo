@@ -1,0 +1,26 @@
+[
+  {
+    "balance_amount": 527,
+    "name": "品类A"
+  },
+  {
+    "balance_amount": 120,
+    "name": "其他"
+  },
+  {
+    "balance_amount": 480,
+    "name": "品类B"
+  },
+  {
+    "balance_amount": 364,
+    "name": "品类C"
+  },
+  {
+    "balance_amount": 536,
+    "name": "品类D"
+  },
+  {
+    "balance_amount": 236,
+    "name": "品类E"
+  }
+]

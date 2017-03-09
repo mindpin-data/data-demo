@@ -28,37 +28,51 @@ app =
     js:   'demo/charts'
     css:  'demo/css'
 
-gulp.task 'js', ->
-  gulp.src app.src.js
-    .pipe plumber()
-    # .pipe smaps.init()
-    .pipe coffee()
-    # .pipe smaps.write('../maps')
-    .pipe concat('charts.js')
-    .pipe gulp.dest(app.dist.js)
+  src1:
+    js: [
+      "demo1/js/utils/date.js.coffee"
+      "demo1/js/base.js.coffee"
+      "demo1/js/loader.js.coffee"
+    ]
+    css:  'demo1/css/*.scss'
+  dist1:
+    js:   'demo1/dist'
+    css:  'demo1/dist'
+
+buildjs = (task, src, file_name, dist)->
+  gulp.task task, ->
+    gulp.src src
+      .pipe plumber()
+      # .pipe smaps.init()
+      .pipe coffee()
+      # .pipe smaps.write('../maps')
+      .pipe concat(file_name)
+      .pipe gulp.dest(dist)
+
+buildjs 'js', app.src.js, 'charts.js', app.dist.js
+buildjs 'js1', app.src1.js, 'index.js', app.dist1.js
 
 gulp.task 'css', ->
-  gulp.src app.src.css
-    .pipe sass({
-        "sourcemap=none": true
-    })
-    .on 'error', (err)->
-      file = err.message.match(/^error\s([\w\.]*)\s/)[1]
-      util.log [
-        err.plugin,
-        util.colors.red file
-        err.message
-      ].join ' '
+  sass app.src.css
+    .on 'error', sass.logError
     .pipe concat('index.css')
     .pipe gulp.dest(app.dist.css)
 
-gulp.task 'build', [
-  'js'
-  'css'
-]
+
+gulp.task 'css1', ->
+  sass app.src1.css
+    .on 'error', sass.logError
+    .pipe concat('index.css')
+    .pipe gulp.dest(app.dist1.css)
+
+
+gulp.task 'build', [ 'js', 'css', 'js1', 'css1']
 
 gulp.task 'default', ['build']
 
 gulp.task 'watch', ['build'], ->
   gulp.watch app.src.js, ['js']
   gulp.watch app.src.css, ['css']
+
+  gulp.watch app.src1.js, ['js1']
+  gulp.watch app.src1.css, ['css1']
