@@ -442,9 +442,123 @@
 }).call(this);
 
 (function() {
-  var PathMap,
+  var PathMap, areas, cities_0, cities_1,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
+
+  areas = ['THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN', 'MMR', 'KAZ', 'UKR', 'TUR'];
+
+  cities_0 = [
+    {
+      c: '西安',
+      lat: 34.34,
+      long: 108.94
+    }, {
+      c: '兰州',
+      lat: 36.07,
+      long: 103.84
+    }, {
+      c: '乌鲁木齐',
+      lat: 43.83,
+      long: 87.62
+    }, {
+      c: '霍尔果斯',
+      lat: 44.21,
+      long: 80.42
+    }, {
+      c: '阿拉木图',
+      lat: 43.24,
+      long: 76.91
+    }, {
+      c: '比什凯克',
+      lat: 42.87,
+      long: 74.59
+    }, {
+      c: '杜尚别',
+      lat: 38.5,
+      long: 68.9
+    }, {
+      c: '德黑兰',
+      lat: 35.8,
+      long: 51.0
+    }, {
+      c: '伊斯坦布尔',
+      lat: 41.0,
+      long: 28.9
+    }, {
+      c: '莫斯科',
+      lat: 55.8,
+      long: 37.6
+    }, {
+      c: '杜伊斯堡',
+      lat: 51.5,
+      long: 6.8
+    }, {
+      c: '鹿特丹',
+      lat: 51.9,
+      long: 4.5
+    }
+  ];
+
+  cities_1 = [
+    {
+      c: '福州',
+      lat: 26.0,
+      long: 119.0
+    }, {
+      c: '泉州',
+      lat: 24.9,
+      long: 118.6
+    }, {
+      c: '广州',
+      lat: 23.0,
+      long: 113.0
+    }, {
+      c: '湛江',
+      lat: 21.2,
+      long: 110.3
+    }, {
+      c: '海口',
+      lat: 20.02,
+      long: 110.35
+    }, {
+      c: '北海',
+      lat: 21.49,
+      long: 109.12
+    }, {
+      c: '河内',
+      lat: 21.0,
+      long: 105.9
+    }, {
+      c: '吉隆坡',
+      lat: 3.0,
+      long: 101.8
+    }, {
+      c: '雅加达',
+      lat: -6.0,
+      long: 106.9
+    }, {
+      c: '科伦坡',
+      lat: 6.9,
+      long: 79.9
+    }, {
+      c: '加尔各答',
+      lat: 22.5,
+      long: 88.0
+    }, {
+      c: '内罗毕',
+      lat: 1.3,
+      long: 36.8
+    }, {
+      c: '雅典',
+      lat: 38.0,
+      long: 23.8
+    }, {
+      c: '威尼斯',
+      lat: 45.5,
+      long: 12.0
+    }
+  ];
 
   PathMap = (function(superClass) {
     extend(PathMap, superClass);
@@ -455,7 +569,9 @@
 
     PathMap.prototype.draw = function() {
       this.svg = this.draw_svg();
-      this.areas = ['THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN', 'MMR', 'KAZ', 'UKR', 'TUR'];
+      this.areas = areas;
+      this.current_area = 'MMR';
+      this.main_area = 'CHN';
       return this.load_data();
     };
 
@@ -467,22 +583,22 @@
             return x.id;
           }));
           _this.draw_map();
-          return _this.draw_running_lines();
+          return _this.draw_cities();
         };
       })(this));
     };
 
     PathMap.prototype.draw_map = function() {
       var countries, map;
-      this.projection = d3.geoMercator().center([80, 26]).scale(this.width * 0.5).translate([this.width / 2, this.height / 2]);
+      this.projection = d3.geoMercator().center([68, 30]).scale(this.width * 0.42).translate([this.width / 2, this.height / 2]);
       this.path = d3.geoPath(this.projection);
       map = this.svg.append('g');
       return countries = map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', 'rgba(120, 180, 208, 1)').style('stroke-width', 2).style('fill', (function(_this) {
         return function(d) {
-          if (d.id === 'CHN') {
+          if (d.id === _this.main_area) {
             return 'rgba(136, 204, 236, 0.6)';
           }
-          if (d.id === 'MMR') {
+          if (d.id === _this.current_area) {
             return 'rgba(255, 216, 40, 1)';
           }
           if (_this.areas.indexOf(d.id) > -1) {
@@ -491,6 +607,32 @@
           return 'rgba(136, 204, 236, 0.1)';
         };
       })(this));
+    };
+
+    PathMap.prototype.draw_cities = function() {
+      var city, i, j, len, len1, line1, points, ref, ref1;
+      points = this.svg.append('g');
+      for (i = 0, len = cities_0.length; i < len; i++) {
+        city = cities_0[i];
+        ref = this.projection([city.long, city.lat]), city.x = ref[0], city.y = ref[1];
+        points.append('circle').attr('class', 'running').attr('cx', city.x).attr('cy', city.y).attr('fill', 'rgb(255, 193, 65)');
+      }
+      for (j = 0, len1 = cities_1.length; j < len1; j++) {
+        city = cities_1[j];
+        ref1 = this.projection([city.long, city.lat]), city.x = ref1[0], city.y = ref1[1];
+        points.append('circle').attr('class', 'running').attr('cx', city.x).attr('cy', city.y).attr('fill', 'rgb(255, 193, 65)');
+      }
+      line1 = d3.line().x((function(_this) {
+        return function(d) {
+          return d.x;
+        };
+      })(this)).y((function(_this) {
+        return function(d) {
+          return d.y;
+        };
+      })(this)).curve(d3.curveCatmullRom.alpha(0.5));
+      points.append('path').attr('class', 'running').datum(cities_0).attr('d', line1).style('stroke', '#ff7c41').style('fill', 'transparent').style('stroke-width', 5).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
+      return points.append('path').attr('class', 'running').datum(cities_1).attr('d', line1).style('stroke', '#ff7c41').style('fill', 'transparent').style('stroke-width', 5).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
     };
 
     PathMap.prototype.draw_running_lines = function() {
