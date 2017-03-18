@@ -1,0 +1,72 @@
+@charset "UTF-8";
+body {
+  background-color: #17243C;
+  padding: 0;
+  color: white;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif, '微软雅黑'; }
+
+* {
+  box-sizing: border-box; }
+
+.paper {
+  background-color: rgba(0, 0, 0, 0.1); }
+
+.tile {
+  background-color: rgba(255, 255, 255, 0.1);
+  position: absolute; }
+
+.tile:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.2); }
+
+.tile.nbg {
+  background-color: transparent; }
+
+.axis path {
+  stroke: rgba(255, 255, 255, 0.5); }
+.axis .tick line {
+  stroke: rgba(255, 255, 255, 0.5); }
+.axis .tick text {
+  fill: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  font-family: arial, '微软雅黑'; }
+
+g text {
+  font-family: arial, '微软雅黑'; }
+
+@keyframes running {
+  from {
+    stroke-dashoffset: 6000; }
+  to {
+    stroke-dashoffset: 0; } }
+line.running, path.running {
+  animation-name: running;
+  animation-duration: 120s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite; }
+
+@keyframes circlerunning {
+  from {
+    r: 10;
+    opacity: 1; }
+  to {
+    r: 60;
+    opacity: 0.3; } }
+circle.warning {
+  animation-name: circlerunning;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite; }
+
+circle.warning.a {
+  animation-delay: .5s; }
+
+@keyframes mpp {
+  from {
+    transform: translate(-30px, -75px); }
+  to {
+    transform: translate(-30px, -50px); } }
+image.map-point {
+  animation-name: mpp;
+  animation-duration: 1s;
+  animation-iteration-count: infinite; }
