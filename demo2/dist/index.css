@@ -50,7 +50,7 @@ line.running, path.running {
     r: 10;
     opacity: 1; }
   to {
-    r: 60;
+    r: 80;
     opacity: 0.3; } }
 circle.warning {
   animation-name: circlerunning;
