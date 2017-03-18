@@ -74,7 +74,23 @@ line.running, path.running {
 
 circle.running {
   animation-name: circlerunning;
-  animation-duration: 1s;
+  animation-duration: 2s;
   animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes mpp {
+  from {
+    transform: translate(-30px, -75px);
+  }
+  to {
+    transform: translate(-30px, -50px);
+  }
+}
+
+image.map-point {
+  animation-name: mpp;
+  animation-duration: 1s;
+  // animation-timing-function: linear;
   animation-iteration-count: infinite;
 }

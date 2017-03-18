@@ -1,8 +1,20 @@
+# areas = [
+#   'THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN'
+#   # 'MMR', 'LAO', 'KHM', 'NPL'
+#   'MMR'
+#   'KAZ', 'UKR', 'TUR'
+# ]
+
 areas = [
-  'THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN'
-  # 'MMR', 'LAO', 'KHM', 'NPL'
-  'MMR'
-  'KAZ', 'UKR', 'TUR'
+  'KAZ', 'KGZ', 'TJK', 'IRN', 'TUR', 'RUS', 'DEU', 'NLD'
+  'VNM', 'MYS', 'IDN', 'LKA', 'IND', 'KEN', 'GRC', 'ITA'
+
+  'THA', 'SGP'
+]
+
+toggle_areas = [
+  # 'THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN'
+  'THA', 'IND', 'VNM', 'MYS', 'IDN'
 ]
 
 cities_0 = [
@@ -43,7 +55,7 @@ class PathMap extends Graph
     @svg = @draw_svg()
 
     @areas = areas
-    @current_area = 'MMR'
+    @current_area = 'THA'
     @main_area = 'CHN'
 
     @load_data()
@@ -57,6 +69,18 @@ class PathMap extends Graph
       # @draw_running_lines()
       @draw_cities()
 
+      @time_loop()
+
+  time_loop: ->
+    @aidx = 0
+    setInterval =>
+      @aidx += 1
+      @aidx = 0 if @aidx == toggle_areas.length
+      @current_area = toggle_areas[@aidx]
+
+      @_draw_map()
+    , 5000
+
   draw_map: ->
     # http://s.4ye.me/ziMnfK
 
@@ -67,9 +91,13 @@ class PathMap extends Graph
 
     @path = d3.geoPath @projection
 
-    map = @svg.append 'g'
+    @g_map = @svg.append 'g'
 
-    countries = map.selectAll('.country')
+    @_draw_map()
+
+  _draw_map: ->
+    @g_map.selectAll('.country').remove()
+    countries = @g_map.selectAll('.country')
       .data @features
       .enter()
       .append 'path'
@@ -79,21 +107,30 @@ class PathMap extends Graph
       .style 'stroke', 'rgba(120, 180, 208, 1)'
       .style 'stroke-width', 2
       .style 'fill', (d)=>
-        return 'rgba(136, 204, 236, 0.6)' if d.id == @main_area
+        return 'rgba(136, 204, 236, 0.7)' if d.id == @main_area
         return 'rgba(255, 216, 40, 1)' if d.id == @current_area
-        return 'rgba(136, 204, 236, 0.4)' if @areas.indexOf(d.id) > -1
+        return 'rgba(136, 204, 236, 0.5)' if @areas.indexOf(d.id) > -1
         return 'rgba(136, 204, 236, 0.1)'
 
-      # .style 'fill', (d)=>
-      #   # return @color_gen(d.lack1) if d.lack1 > 0
-      #   return 'transparent'
-      # .style 'stroke', COLOR_IN
-      # .style 'stroke-width', 3
-      # .attr 'd', path
+    feature = @features.filter((x)=> x.id == @current_area)[0]
+
+    if feature
+      [x, y] = @path.centroid(feature)
+
+      @g_map.selectAll('image').remove()
+      @g_map.append 'image'
+        .attr 'class', 'map-point'
+        .attr 'href', 'img/mapicon1.png'
+        .attr 'x', x
+        .attr 'y', y
+        .style 'transform', 'translate(-30px, -50px)'
+        .attr 'width', 60
+        .attr 'height', 60
+
+
 
   draw_cities: ->
     points = @svg.append 'g'
-
 
     for city in cities_0
       [city.x, city.y] = @projection [city.long, city.lat]
@@ -125,7 +162,8 @@ class PathMap extends Graph
       .attr 'class', 'running'
       .datum cities_0
       .attr 'd', line1
-      .style 'stroke', '#ff7c41'
+      # .style 'stroke', '#ff7c41'
+      .style 'stroke', 'rgb(205, 255, 65)'
       .style 'fill', 'transparent'
       .style 'stroke-width', 5
       .style 'stroke-dasharray', '20 20'
@@ -136,54 +174,55 @@ class PathMap extends Graph
       .datum cities_1
       .attr 'd', line1
       .style 'stroke', '#ff7c41'
+      # .style 'stroke', 'rgb(205, 255, 65)'
       .style 'fill', 'transparent'
       .style 'stroke-width', 5
       .style 'stroke-dasharray', '20 20'
       .style 'stroke-linecap', 'round'
 
-  draw_running_lines: ->
-    # 贵阳
-    points = @svg.append 'g'
+  # draw_running_lines: ->
+  #   # 贵阳
+  #   points = @svg.append 'g'
 
-    [x0, y0] = @projection [106.71, 26.57]
+  #   [x0, y0] = @projection [106.71, 26.57]
 
-    for area in @areas
-      feature = @features.filter((x)-> x.id == area)[0]
-      if feature
-        [x, y] = @path.centroid(feature)
+  #   for area in @areas
+  #     feature = @features.filter((x)-> x.id == area)[0]
+  #     if feature
+  #       [x, y] = @path.centroid(feature)
 
-        points.append 'line'
-          .attr 'class', 'running'
-          .attr 'x1', x0
-          .attr 'y1', y0
-          .attr 'x2', x
-          .attr 'y2', y
-          .style 'stroke', 'rgb(255, 132, 65)'
-          .style 'stroke-width', 4
-          .style 'stroke-dasharray', '20 20'
-          # .style 'stroke-dashoffset', '0'
-          .style 'stroke-linecap', 'round'
+  #       points.append 'line'
+  #         .attr 'class', 'running'
+  #         .attr 'x1', x0
+  #         .attr 'y1', y0
+  #         .attr 'x2', x
+  #         .attr 'y2', y
+  #         .style 'stroke', 'rgb(255, 132, 65)'
+  #         .style 'stroke-width', 4
+  #         .style 'stroke-dasharray', '20 20'
+  #         # .style 'stroke-dashoffset', '0'
+  #         .style 'stroke-linecap', 'round'
 
-        points.append 'circle'
-          .attr 'class', 'running'
-          .attr 'cx', x
-          .attr 'cy', y
-          # .style 'r', 8
-          .attr 'fill', 'rgb(255, 193, 65)'
+  #       points.append 'circle'
+  #         .attr 'class', 'running'
+  #         .attr 'cx', x
+  #         .attr 'cy', y
+  #         # .style 'r', 8
+  #         .attr 'fill', 'rgb(255, 193, 65)'
 
-        points.append 'image'
-          .attr 'href', 'img/mapicon1.png'
-          .attr 'x', x
-          .attr 'y', y
-          .style 'transform', 'translate(-30px, -50px)'
-          .attr 'width', 60
-          .attr 'height', 60
+  #       points.append 'image'
+  #         .attr 'href', 'img/mapicon1.png'
+  #         .attr 'x', x
+  #         .attr 'y', y
+  #         .style 'transform', 'translate(-30px, -50px)'
+  #         .attr 'width', 60
+  #         .attr 'height', 60
 
-    points.append 'circle'
-      .attr 'cx', x0
-      .attr 'cy', y0
-      .attr 'r', 16
-      .attr 'fill', 'rgb(255, 193, 65)'
+  #   points.append 'circle'
+  #     .attr 'cx', x0
+  #     .attr 'cy', y0
+  #     .attr 'r', 16
+  #     .attr 'fill', 'rgb(255, 193, 65)'
 
 
 

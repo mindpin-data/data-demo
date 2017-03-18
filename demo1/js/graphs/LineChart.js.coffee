@@ -24,6 +24,26 @@ class LineChart extends Graph
     @draw_axis()
     @draw_lines()
 
+    @time_loop()
+
+  time_loop: ->
+    @aidx = 0
+    setInterval =>
+      @data0 = @data0.map (x)=> 
+        y = x + Math.random() * 30 - + Math.random() * 30
+        y = 0 if y < 0
+        y = 180 if y > 180
+        y
+
+      @data1 = @data1.map (x)=> 
+        y = x + Math.random() * 30 - + Math.random() * 30
+        y = 0 if y < 0
+        y = 180 if y > 180
+        y
+
+      @draw_lines()
+    , 5000
+
   make_defs: ->
     # https://www.w3cplus.com/svg/svg-linear-gradients.html
 
@@ -60,8 +80,9 @@ class LineChart extends Graph
       .attr 'stop-color', 'rgba(60, 180, 236, 0.05)'
 
   draw_lines: ->
-    panel = @svg.append('g')
-      .attr 'transform', "translate(40, 10)"
+    if not @panel?
+      @panel = @svg.append('g')
+        .attr 'transform', "translate(40, 10)"
 
     line1 = d3.line()
       .x (d, idx)=> @xscale idx
@@ -89,14 +110,16 @@ class LineChart extends Graph
       .y (d, idx)=>
         @yscale d
 
+    @panel.selectAll('path.pre-line').remove()
+    @panel.selectAll('circle').remove()
 
-    panel.append 'path'
+    @panel.append 'path'
       .datum [0, 0].concat @data0
       .attr 'class', 'pre-line'
       .attr 'd', arealine1
       .style 'fill', 'url(#line-chart-linear1)'
 
-    panel.append 'path'
+    @panel.append 'path'
       .datum @data0
       .attr 'class', 'pre-line'
       .attr 'd', line1
@@ -105,19 +128,19 @@ class LineChart extends Graph
       .style 'stroke-width', 2
 
     for d, idx in @data0
-      panel.append 'circle'
+      @panel.append 'circle'
         .attr 'cx', @xscale idx
         .attr 'cy', @yscale d
         .attr 'r', 4
         .attr 'fill', @c1
 
-    panel.append 'path'
+    @panel.append 'path'
       .datum [0, 0].concat @data1
       .attr 'class', 'pre-line'
       .attr 'd', arealine2
       .style 'fill', 'url(#line-chart-linear2)'
 
-    panel.append 'path'
+    @panel.append 'path'
       .datum @data1
       .attr 'class', 'pre-line'
       .attr 'd', line1
@@ -126,7 +149,7 @@ class LineChart extends Graph
       .style 'stroke-width', 2
 
     for d, idx in @data1
-      panel.append 'circle'
+      @panel.append 'circle'
         .attr 'cx', @xscale idx
         .attr 'cy', @yscale d
         .attr 'r', 4

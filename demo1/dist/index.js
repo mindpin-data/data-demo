@@ -227,7 +227,39 @@
       this.yscale = d3.scaleLinear().domain([0, 180]).range([this.h, 0]);
       this.make_defs();
       this.draw_axis();
-      return this.draw_lines();
+      this.draw_lines();
+      return this.time_loop();
+    };
+
+    LineChart.prototype.time_loop = function() {
+      this.aidx = 0;
+      return setInterval((function(_this) {
+        return function() {
+          _this.data0 = _this.data0.map(function(x) {
+            var y;
+            y = x + Math.random() * 30 - +Math.random() * 30;
+            if (y < 0) {
+              y = 0;
+            }
+            if (y > 180) {
+              y = 180;
+            }
+            return y;
+          });
+          _this.data1 = _this.data1.map(function(x) {
+            var y;
+            y = x + Math.random() * 30 - +Math.random() * 30;
+            if (y < 0) {
+              y = 0;
+            }
+            if (y > 180) {
+              y = 180;
+            }
+            return y;
+          });
+          return _this.draw_lines();
+        };
+      })(this), 5000);
     };
 
     LineChart.prototype.make_defs = function() {
@@ -242,8 +274,10 @@
     };
 
     LineChart.prototype.draw_lines = function() {
-      var arealine1, arealine2, d, i, idx, j, len, len1, line1, panel, ref, ref1, results;
-      panel = this.svg.append('g').attr('transform', "translate(40, 10)");
+      var arealine1, arealine2, d, i, idx, j, len, len1, line1, ref, ref1, results;
+      if (this.panel == null) {
+        this.panel = this.svg.append('g').attr('transform', "translate(40, 10)");
+      }
       line1 = d3.line().x((function(_this) {
         return function(d, idx) {
           return _this.xscale(idx);
@@ -283,20 +317,22 @@
           return _this.yscale(d);
         };
       })(this));
-      panel.append('path').datum([0, 0].concat(this.data0)).attr('class', 'pre-line').attr('d', arealine1).style('fill', 'url(#line-chart-linear1)');
-      panel.append('path').datum(this.data0).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c1).style('fill', 'transparent').style('stroke-width', 2);
+      this.panel.selectAll('path.pre-line').remove();
+      this.panel.selectAll('circle').remove();
+      this.panel.append('path').datum([0, 0].concat(this.data0)).attr('class', 'pre-line').attr('d', arealine1).style('fill', 'url(#line-chart-linear1)');
+      this.panel.append('path').datum(this.data0).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c1).style('fill', 'transparent').style('stroke-width', 2);
       ref = this.data0;
       for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
         d = ref[idx];
-        panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c1);
+        this.panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c1);
       }
-      panel.append('path').datum([0, 0].concat(this.data1)).attr('class', 'pre-line').attr('d', arealine2).style('fill', 'url(#line-chart-linear2)');
-      panel.append('path').datum(this.data1).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c2).style('fill', 'transparent').style('stroke-width', 2);
+      this.panel.append('path').datum([0, 0].concat(this.data1)).attr('class', 'pre-line').attr('d', arealine2).style('fill', 'url(#line-chart-linear2)');
+      this.panel.append('path').datum(this.data1).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c2).style('fill', 'transparent').style('stroke-width', 2);
       ref1 = this.data1;
       results = [];
       for (idx = j = 0, len1 = ref1.length; j < len1; idx = ++j) {
         d = ref1[idx];
-        results.push(panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c2));
+        results.push(this.panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c2));
       }
       return results;
     };
@@ -359,9 +395,39 @@
 }).call(this);
 
 (function() {
-  var OneArea,
+  var OneArea, area_data, toggle_areas,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
+
+  toggle_areas = ['taiguo', 'yindu', 'yuenan', 'malai', 'yinni'];
+
+  area_data = {
+    taiguo: {
+      d: 2817109,
+      n: '泰国',
+      p: 14.3
+    },
+    yinni: {
+      d: 3876152,
+      n: '印尼',
+      p: 15.4
+    },
+    yuenan: {
+      d: 5132828,
+      n: '越南',
+      p: 16.5
+    },
+    malai: {
+      d: 4078910,
+      n: '马来西亚',
+      p: 17.6
+    },
+    yindu: {
+      d: 6004324,
+      n: '印度',
+      p: 18.7
+    }
+  };
 
   OneArea = (function(superClass) {
     extend(OneArea, superClass);
@@ -372,25 +438,44 @@
 
     OneArea.prototype.draw = function() {
       this.svg = this.draw_svg();
+      this.current_area = 'taiguo';
       this.draw_flag();
-      return this.draw_texts();
+      this.draw_texts();
+      return this.time_loop();
+    };
+
+    OneArea.prototype.time_loop = function() {
+      this.aidx = 0;
+      return setInterval((function(_this) {
+        return function() {
+          _this.aidx += 1;
+          if (_this.aidx === toggle_areas.length) {
+            _this.aidx = 0;
+          }
+          _this.current_area = toggle_areas[_this.aidx];
+          _this.draw_flag();
+          return _this.draw_texts();
+        };
+      })(this), 5000);
     };
 
     OneArea.prototype.draw_flag = function() {
       var flag;
-      flag = this.svg.append('g');
-      return flag.append('image').attr('href', 'img/taiguo.png').attr('height', this.height - 60).attr('x', 0).attr('y', 30);
+      this.svg.select('g.flag').remove();
+      flag = this.svg.append('g').attr('class', 'flag');
+      return flag.append('image').attr('href', "img/" + this.current_area + ".png").attr('height', this.height - 60).attr('x', 0).attr('y', 30);
     };
 
     OneArea.prototype.draw_texts = function() {
       var size, size1, size2, texts;
-      texts = this.svg.append('g').style('transform', 'translate(260px, 0px)');
+      this.svg.select('g.texts').remove();
+      texts = this.svg.append('g').attr('class', 'texts').style('transform', 'translate(260px, 0px)');
       size = 40;
-      texts.append('text').attr('x', 0).attr('y', size / 2 + 10).attr('dy', '.33em').text('泰国销量').style('font-size', size).style('fill', '#ffffff');
+      texts.append('text').attr('x', 0).attr('y', size / 2 + 10).attr('dy', '.33em').text(area_data[this.current_area].n + "销量").style('font-size', size).style('fill', '#ffffff');
       size1 = 50;
-      texts.append('text').attr('x', 0).attr('y', size / 2 + size + 40).attr('dy', '.33em').text('2817109').style('font-size', size1).style('fill', '#ffff05');
+      texts.append('text').attr('x', 0).attr('y', size / 2 + size + 40).attr('dy', '.33em').text(area_data[this.current_area].d).style('font-size', size1).style('fill', '#ffff05');
       size2 = 40;
-      texts.append('text').attr('x', 0).attr('y', size / 2 + size + 34 + size1 + 30).attr('dy', '.33em').text('同比 14.3%').style('font-size', size2).style('fill', '#ffffff');
+      texts.append('text').attr('x', 0).attr('y', size / 2 + size + 34 + size1 + 30).attr('dy', '.33em').text("同比 " + area_data[this.current_area].p + "%").style('font-size', size2).style('fill', '#ffffff');
       return texts.append('image').attr('x', 215).attr('y', size / 2 + size + 34 + size1 + 30 - size2 / 2).attr('href', 'img/upicon1.png').attr('height', size2);
     };
 
@@ -442,11 +527,13 @@
 }).call(this);
 
 (function() {
-  var PathMap, areas, cities_0, cities_1,
+  var PathMap, areas, cities_0, cities_1, toggle_areas,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  areas = ['THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN', 'MMR', 'KAZ', 'UKR', 'TUR'];
+  areas = ['KAZ', 'KGZ', 'TJK', 'IRN', 'TUR', 'RUS', 'DEU', 'NLD', 'VNM', 'MYS', 'IDN', 'LKA', 'IND', 'KEN', 'GRC', 'ITA', 'THA', 'SGP'];
+
+  toggle_areas = ['THA', 'IND', 'VNM', 'MYS', 'IDN'];
 
   cities_0 = [
     {
@@ -570,7 +657,7 @@
     PathMap.prototype.draw = function() {
       this.svg = this.draw_svg();
       this.areas = areas;
-      this.current_area = 'MMR';
+      this.current_area = 'THA';
       this.main_area = 'CHN';
       return this.load_data();
     };
@@ -583,30 +670,60 @@
             return x.id;
           }));
           _this.draw_map();
-          return _this.draw_cities();
+          _this.draw_cities();
+          return _this.time_loop();
         };
       })(this));
     };
 
+    PathMap.prototype.time_loop = function() {
+      this.aidx = 0;
+      return setInterval((function(_this) {
+        return function() {
+          _this.aidx += 1;
+          if (_this.aidx === toggle_areas.length) {
+            _this.aidx = 0;
+          }
+          _this.current_area = toggle_areas[_this.aidx];
+          return _this._draw_map();
+        };
+      })(this), 5000);
+    };
+
     PathMap.prototype.draw_map = function() {
-      var countries, map;
       this.projection = d3.geoMercator().center([68, 30]).scale(this.width * 0.42).translate([this.width / 2, this.height / 2]);
       this.path = d3.geoPath(this.projection);
-      map = this.svg.append('g');
-      return countries = map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', 'rgba(120, 180, 208, 1)').style('stroke-width', 2).style('fill', (function(_this) {
+      this.g_map = this.svg.append('g');
+      return this._draw_map();
+    };
+
+    PathMap.prototype._draw_map = function() {
+      var countries, feature, ref, x, y;
+      this.g_map.selectAll('.country').remove();
+      countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', 'rgba(120, 180, 208, 1)').style('stroke-width', 2).style('fill', (function(_this) {
         return function(d) {
           if (d.id === _this.main_area) {
-            return 'rgba(136, 204, 236, 0.6)';
+            return 'rgba(136, 204, 236, 0.7)';
           }
           if (d.id === _this.current_area) {
             return 'rgba(255, 216, 40, 1)';
           }
           if (_this.areas.indexOf(d.id) > -1) {
-            return 'rgba(136, 204, 236, 0.4)';
+            return 'rgba(136, 204, 236, 0.5)';
           }
           return 'rgba(136, 204, 236, 0.1)';
         };
       })(this));
+      feature = this.features.filter((function(_this) {
+        return function(x) {
+          return x.id === _this.current_area;
+        };
+      })(this))[0];
+      if (feature) {
+        ref = this.path.centroid(feature), x = ref[0], y = ref[1];
+        this.g_map.selectAll('image').remove();
+        return this.g_map.append('image').attr('class', 'map-point').attr('href', 'img/mapicon1.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
+      }
     };
 
     PathMap.prototype.draw_cities = function() {
@@ -631,28 +748,8 @@
           return d.y;
         };
       })(this)).curve(d3.curveCatmullRom.alpha(0.5));
-      points.append('path').attr('class', 'running').datum(cities_0).attr('d', line1).style('stroke', '#ff7c41').style('fill', 'transparent').style('stroke-width', 5).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
+      points.append('path').attr('class', 'running').datum(cities_0).attr('d', line1).style('stroke', 'rgb(205, 255, 65)').style('fill', 'transparent').style('stroke-width', 5).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
       return points.append('path').attr('class', 'running').datum(cities_1).attr('d', line1).style('stroke', '#ff7c41').style('fill', 'transparent').style('stroke-width', 5).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
-    };
-
-    PathMap.prototype.draw_running_lines = function() {
-      var area, feature, i, len, points, ref, ref1, ref2, x, x0, y, y0;
-      points = this.svg.append('g');
-      ref = this.projection([106.71, 26.57]), x0 = ref[0], y0 = ref[1];
-      ref1 = this.areas;
-      for (i = 0, len = ref1.length; i < len; i++) {
-        area = ref1[i];
-        feature = this.features.filter(function(x) {
-          return x.id === area;
-        })[0];
-        if (feature) {
-          ref2 = this.path.centroid(feature), x = ref2[0], y = ref2[1];
-          points.append('line').attr('class', 'running').attr('x1', x0).attr('y1', y0).attr('x2', x).attr('y2', y).style('stroke', 'rgb(255, 132, 65)').style('stroke-width', 4).style('stroke-dasharray', '20 20').style('stroke-linecap', 'round');
-          points.append('circle').attr('class', 'running').attr('cx', x).attr('cy', y).attr('fill', 'rgb(255, 193, 65)');
-          points.append('image').attr('href', 'img/mapicon1.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
-        }
-      }
-      return points.append('circle').attr('cx', x0).attr('cy', y0).attr('r', 16).attr('fill', 'rgb(255, 193, 65)');
     };
 
     return PathMap;
