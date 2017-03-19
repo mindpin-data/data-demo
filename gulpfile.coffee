@@ -54,6 +54,18 @@ app =
     css:  'demo2/dist'
 
 
+  src3:
+    js: [
+      "demo3/js/utils/date.js.coffee"
+      "demo3/js/base.js.coffee"
+      "demo3/js/graphs/*.js.coffee"
+      "demo3/js/loader.js.coffee"
+    ]
+    css:  'demo3/css/*.scss'
+  dist3:
+    js:   'demo3/dist'
+    css:  'demo3/dist'
+
 
 buildjs = (task, src, file_name, dist)->
   gulp.task task, ->
@@ -68,6 +80,8 @@ buildjs = (task, src, file_name, dist)->
 buildjs 'js',  app.src.js, 'charts.js', app.dist.js
 buildjs 'js1', app.src1.js, 'index.js', app.dist1.js
 buildjs 'js2', app.src2.js, 'index.js', app.dist2.js
+buildjs 'js3', app.src3.js, 'index.js', app.dist3.js
+
 
 gulp.task 'css', ->
   sass app.src.css
@@ -82,15 +96,25 @@ gulp.task 'css1', ->
     .pipe concat('index.css')
     .pipe gulp.dest(app.dist1.css)
 
-
 gulp.task 'css2', ->
   sass app.src2.css
     .on 'error', sass.logError
     .pipe concat('index.css')
     .pipe gulp.dest(app.dist2.css)
 
+gulp.task 'css3', ->
+  sass app.src3.css
+    .on 'error', sass.logError
+    .pipe concat('index.css')
+    .pipe gulp.dest(app.dist3.css)
 
-gulp.task 'build', [ 'js', 'css', 'js1', 'css1', 'js2', 'css2']
+
+gulp.task 'build', [ 
+  'js',  'css', 
+  'js1', 'css1', 
+  'js2', 'css2',
+  'js3', 'css3'
+]
 
 gulp.task 'default', ['build']
 
@@ -103,3 +127,6 @@ gulp.task 'watch', ['build'], ->
 
   gulp.watch app.src2.js, ['js2']
   gulp.watch app.src2.css, ['css2']
+
+  gulp.watch app.src3.js, ['js3']
+  gulp.watch app.src3.css, ['css3']  

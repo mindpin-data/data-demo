@@ -1,0 +1,100 @@
+$text-color: mix(#1A2842, #fff, 40%);
+$title-color: mix(#1A2842, #fff, 20%);
+
+$BG-COLOR: #17243C;
+
+body {
+  background-color: $BG-COLOR;
+  padding: 0;
+  color: white;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif, '微软雅黑';
+}
+
+* { box-sizing: border-box; }
+
+.paper {
+  background-color: rgba(black, 0.1);
+}
+
+.tile {
+  background-color: rgba(white, 0.1);
+  position: absolute;
+}
+.tile:nth-child(even) {
+  background-color: rgba(white, 0.2);
+}
+
+.tile.nbg {
+  background-color: transparent;
+}
+
+$text-color: rgba(white, 0.5);
+.axis {
+  path {
+    stroke: $text-color;
+  }
+
+  .tick line {
+    stroke: $text-color;
+  }
+  .tick text {
+    fill: $text-color;
+    font-size: 16px;
+    font-family: arial, '微软雅黑';
+  }
+}
+
+g text {
+  font-family: arial, '微软雅黑';
+}
+
+@keyframes running {
+  from {stroke-dashoffset: 6000;}
+  to {stroke-dashoffset: 0;}
+}
+
+line.running, path.running {
+  animation-name: running;
+  animation-duration: 120s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes circlerunning {
+  from {
+    r: 10;
+    opacity: 1;
+  }
+  to {
+    r: 80;
+    opacity: 0.3;
+  }
+}
+
+circle.warning {
+  animation-name: circlerunning;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+circle.warning.a {
+  animation-delay: .5s;
+}
+
+@keyframes mpp {
+  from {
+    transform: translate(-30px, -75px);
+  }
+  to {
+    transform: translate(-30px, -50px);
+  }
+}
+
+image.map-point {
+  animation-name: mpp;
+  animation-duration: 1s;
+  // animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
