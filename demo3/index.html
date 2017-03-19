@@ -10,13 +10,14 @@
     <link rel="stylesheet" media="all" href="dist/index.css" />
 
     <script src="../lib/all.js"></script>
+    <script src="../lib/heatmap.min.js"></script>
     <script src="dist/index.js"></script>
   </head>
 
   <body>
     <div class='paper' style='padding: 40px;'>
       <div class='tile nbg' data-layout='[0, 0, 24, 12]' style='padding-right: 50px;'>
-        <div class='tile nbg' data-g='path-map' data-layout='[0, 0, 24, 24]'></div>
+        <div class='tile nbg' id='heatmap' data-g='path-map' data-layout='[0, 0, 24, 24]'></div>
       </div>
 
       <div class='tile nbg' data-layout='[0, 12, 24, 12]'>

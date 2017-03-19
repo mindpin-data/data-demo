@@ -375,7 +375,8 @@
       return d3.json('data/world-countries.json?1', (function(_this) {
         return function(error, _data) {
           _this.features = _data.features;
-          return _this.draw_map();
+          _this.draw_map();
+          return _this.draw_heatmap();
         };
       })(this));
     };
@@ -402,6 +403,33 @@
           return 'rgba(136, 204, 236, 0.1)';
         };
       })(this));
+    };
+
+    PathMap.prototype.draw_heatmap = function() {
+      var heatmapInstance, len, max, point, points, val;
+      heatmapInstance = h337.create({
+        container: jQuery('#heatmap')[0]
+      });
+      points = [];
+      max = 0;
+      len = 200;
+      while (len > 0) {
+        len = len - 1;
+        val = Math.floor(Math.random() * 100);
+        max = Math.max(max, val);
+        point = {
+          x: Math.floor(Math.random() * this.width),
+          y: Math.floor(Math.random() * this.height),
+          value: val
+        };
+        points.push(point);
+      }
+      console.log(points);
+      data = {
+        max: max,
+        data: points
+      };
+      return heatmapInstance.setData(data);
     };
 
     return PathMap;

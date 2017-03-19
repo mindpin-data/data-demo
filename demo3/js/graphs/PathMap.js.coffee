@@ -31,6 +31,7 @@ class PathMap extends Graph
       @features = _data.features
 
       @draw_map()
+      @draw_heatmap()
 
   draw_map: ->
     # http://s.4ye.me/ziMnfK
@@ -65,6 +66,38 @@ class PathMap extends Graph
         # return 'rgba(255, 216, 40, 1)' if d.id == @current_area
         # return 'rgba(136, 204, 236, 0.5)' if @areas.indexOf(d.id) > -1
         return 'rgba(136, 204, 236, 0.1)'
+
+
+  draw_heatmap: ->
+    heatmapInstance = h337.create({
+      # only container is required, the rest will be defaults
+      container: jQuery('#heatmap')[0]
+    });
+
+    points = []
+    max = 0
+    len = 200
+
+    while len > 0
+      len = len - 1
+      val = Math.floor(Math.random() * 100)
+      max = Math.max(max, val)
+      point = {
+        x: Math.floor(Math.random() * @width)
+        y: Math.floor(Math.random() * @height)
+        value: val
+      }
+      points.push(point)
+
+    console.log points
+
+    data = {
+      max: max
+      data: points
+    }
+
+    heatmapInstance.setData(data)
+
 
 
 BaseTile.register 'path-map', PathMap
