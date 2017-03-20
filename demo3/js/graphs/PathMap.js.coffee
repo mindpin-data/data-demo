@@ -1,25 +1,3 @@
-data = [
-  { lat: 103, long: 30, d: 30, type: 1}
-  { lat: 110, long: 29, d: 20, type: 1}
-  { lat: 106.9, long: 27.7, d: 25, type: 1}
-  { lat: 104, long: 26, d: 20, type: 1}
-  { lat: 106, long: 23, d: 20, type: 1}
-
-  { lat: 114.3, long: 28.7, d: 20, type: 2}
-  { lat: 106.3, long: 29.6, d: 17, type: 2}
-  { lat: 103.7, long: 26.8, d: 23, type: 2}
-  { lat: 108.6, long: 25.5, d: 24, type: 2}
-
-  { lat: 113.7, long: 34.6, d: 30, type: 3}
-  { lat: 105.1, long: 28.7, d: 25, type: 3}
-  { lat: 103.7, long: 26.8, d: 24, type: 3}
-  { lat: 111.8, long: 24.4, d: 20, type: 3}
-  { lat: 100.2, long: 23.1, d: 19, type: 3}
-]
-
-
-
-
 class PathMap extends Graph
   draw: ->
     @svg = @draw_svg()
@@ -62,7 +40,7 @@ class PathMap extends Graph
 
       .style 'stroke-width', 2
       .style 'fill', (d)=>
-        return 'rgba(136, 204, 236, 0.5)' if d.id == 'CHN'
+        return 'rgba(136, 204, 236, 0.2)' if d.id == 'CHN'
         # return 'rgba(255, 216, 40, 1)' if d.id == @current_area
         # return 'rgba(136, 204, 236, 0.5)' if @areas.indexOf(d.id) > -1
         return 'rgba(136, 204, 236, 0.1)'
@@ -72,32 +50,83 @@ class PathMap extends Graph
     heatmapInstance = h337.create({
       # only container is required, the rest will be defaults
       container: jQuery('#heatmap')[0]
-    });
+      radius: 24
+      gradient:
+        '0.2': '#28669b'
+        '0.8': '#34cee9'
+        '1.0': 'white'
+    })
 
     points = []
     max = 0
-    len = 200
+    len = 600
+
+    chn_feature = @features.filter((x)=> x.id == 'CHN')[0]
+
+    # 经度数据比例尺
+    xscale = d3.scaleLinear()
+      .range [0, 1]
+      .domain [73, 135]
+
+    # console.log xscale 0
+
+    yscale = d3.scaleLinear()
+      .range [0, 2]
+      .domain [53, 4]
+
+    dscale = d3.scaleLinear()
+      .range [-0.5, 0.5]
+      .domain [0, 3]
+
 
     while len > 0
-      len = len - 1
-      val = Math.floor(Math.random() * 100)
-      max = Math.max(max, val)
-      point = {
-        x: Math.floor(Math.random() * @width)
-        y: Math.floor(Math.random() * @height)
-        value: val
-      }
-      points.push(point)
+      lat = 73 + Math.random() * (135 - 73) # 生成经度范围内数据
+      long = 4 + Math.random() * (53 - 4) # 生成纬度范围内数据
 
-    console.log points
+      if d3.geoContains(chn_feature, [lat, long]) # 在中国范围内
+        len = len - 1
+
+        val = Math.floor(150 + Math.random() * (451 - 150)) # 生成 150 ~ 450 区间的整形数据
+        val = val * xscale lat
+        val = val * yscale long
+
+        [x, y] = @projection [lat, long] # 计算对应坐标
+
+        point = {
+          x: Math.floor(x * 100) / 100
+          y: Math.floor(y * 100) / 100
+          value: val
+        }
+
+        points.push point
 
     data = {
-      max: max
+      max: 600
       data: points
     }
 
     heatmapInstance.setData(data)
 
+    n = 0
+    setInterval =>
+      n++
+
+      data.data = data.data.map (x, idx)=>
+        delta = Math.floor(Math.random() * 10)
+        p = dscale((idx + Math.floor(n / 100)) % 4)
+
+        value = x.value + delta * p
+
+        {
+          x: x.x
+          y: x.y
+          value: value
+        }
+
+
+      heatmapInstance.setData(data)
+
+    , 1000 / 60
 
 
 BaseTile.register 'path-map', PathMap

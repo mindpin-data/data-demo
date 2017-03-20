@@ -281,83 +281,9 @@
 }).call(this);
 
 (function() {
-  var PathMap, data,
+  var PathMap,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
-
-  data = [
-    {
-      lat: 103,
-      long: 30,
-      d: 30,
-      type: 1
-    }, {
-      lat: 110,
-      long: 29,
-      d: 20,
-      type: 1
-    }, {
-      lat: 106.9,
-      long: 27.7,
-      d: 25,
-      type: 1
-    }, {
-      lat: 104,
-      long: 26,
-      d: 20,
-      type: 1
-    }, {
-      lat: 106,
-      long: 23,
-      d: 20,
-      type: 1
-    }, {
-      lat: 114.3,
-      long: 28.7,
-      d: 20,
-      type: 2
-    }, {
-      lat: 106.3,
-      long: 29.6,
-      d: 17,
-      type: 2
-    }, {
-      lat: 103.7,
-      long: 26.8,
-      d: 23,
-      type: 2
-    }, {
-      lat: 108.6,
-      long: 25.5,
-      d: 24,
-      type: 2
-    }, {
-      lat: 113.7,
-      long: 34.6,
-      d: 30,
-      type: 3
-    }, {
-      lat: 105.1,
-      long: 28.7,
-      d: 25,
-      type: 3
-    }, {
-      lat: 103.7,
-      long: 26.8,
-      d: 24,
-      type: 3
-    }, {
-      lat: 111.8,
-      long: 24.4,
-      d: 20,
-      type: 3
-    }, {
-      lat: 100.2,
-      long: 23.1,
-      d: 19,
-      type: 3
-    }
-  ];
 
   PathMap = (function(superClass) {
     extend(PathMap, superClass);
@@ -398,7 +324,7 @@
       })(this)).style('stroke-width', 2).style('fill', (function(_this) {
         return function(d) {
           if (d.id === 'CHN') {
-            return 'rgba(136, 204, 236, 0.5)';
+            return 'rgba(136, 204, 236, 0.2)';
           }
           return 'rgba(136, 204, 236, 0.1)';
         };
@@ -406,30 +332,67 @@
     };
 
     PathMap.prototype.draw_heatmap = function() {
-      var heatmapInstance, len, max, point, points, val;
+      var chn_feature, data, dscale, heatmapInstance, lat, len, long, max, n, point, points, ref, val, x, xscale, y, yscale;
       heatmapInstance = h337.create({
-        container: jQuery('#heatmap')[0]
+        container: jQuery('#heatmap')[0],
+        radius: 24,
+        gradient: {
+          '0.2': '#28669b',
+          '0.8': '#34cee9',
+          '1.0': 'white'
+        }
       });
       points = [];
       max = 0;
-      len = 200;
-      while (len > 0) {
-        len = len - 1;
-        val = Math.floor(Math.random() * 100);
-        max = Math.max(max, val);
-        point = {
-          x: Math.floor(Math.random() * this.width),
-          y: Math.floor(Math.random() * this.height),
-          value: val
+      len = 600;
+      chn_feature = this.features.filter((function(_this) {
+        return function(x) {
+          return x.id === 'CHN';
         };
-        points.push(point);
+      })(this))[0];
+      xscale = d3.scaleLinear().range([0, 1]).domain([73, 135]);
+      yscale = d3.scaleLinear().range([0, 2]).domain([53, 4]);
+      dscale = d3.scaleLinear().range([-0.5, 0.5]).domain([0, 3]);
+      while (len > 0) {
+        lat = 73 + Math.random() * (135 - 73);
+        long = 4 + Math.random() * (53 - 4);
+        if (d3.geoContains(chn_feature, [lat, long])) {
+          len = len - 1;
+          val = Math.floor(150 + Math.random() * (451 - 150));
+          val = val * xscale(lat);
+          val = val * yscale(long);
+          ref = this.projection([lat, long]), x = ref[0], y = ref[1];
+          point = {
+            x: Math.floor(x * 100) / 100,
+            y: Math.floor(y * 100) / 100,
+            value: val
+          };
+          points.push(point);
+        }
       }
-      console.log(points);
       data = {
-        max: max,
+        max: 600,
         data: points
       };
-      return heatmapInstance.setData(data);
+      heatmapInstance.setData(data);
+      n = 0;
+      return setInterval((function(_this) {
+        return function() {
+          n++;
+          data.data = data.data.map(function(x, idx) {
+            var delta, p, value;
+            delta = Math.floor(Math.random() * 10);
+            p = dscale((idx + Math.floor(n / 100)) % 4);
+            value = x.value + delta * p;
+            return {
+              x: x.x,
+              y: x.y,
+              value: value
+            };
+          });
+          return heatmapInstance.setData(data);
+        };
+      })(this), 1000 / 60);
     };
 
     return PathMap;
