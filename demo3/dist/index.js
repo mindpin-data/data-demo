@@ -363,6 +363,8 @@
           val = val * yscale(long);
           ref = this.projection([lat, long]), x = ref[0], y = ref[1];
           point = {
+            lat: lat,
+            long: long,
             x: Math.floor(x * 100) / 100,
             y: Math.floor(y * 100) / 100,
             value: val
@@ -381,10 +383,13 @@
           n++;
           data.data = data.data.map(function(x, idx) {
             var delta, p, value;
-            delta = Math.floor(Math.random() * 10);
+            delta = Math.floor(Math.random() * 20);
             p = dscale((idx + Math.floor(n / 100)) % 4);
+            p = p * (xscale(x.lat)) * (yscale(x.long));
             value = x.value + delta * p;
             return {
+              lat: x.lat,
+              long: x.long,
               x: x.x,
               y: x.y,
               value: value

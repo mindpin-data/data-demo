@@ -93,6 +93,8 @@ class PathMap extends Graph
         [x, y] = @projection [lat, long] # 计算对应坐标
 
         point = {
+          lat: lat
+          long: long
           x: Math.floor(x * 100) / 100
           y: Math.floor(y * 100) / 100
           value: val
@@ -112,12 +114,16 @@ class PathMap extends Graph
       n++
 
       data.data = data.data.map (x, idx)=>
-        delta = Math.floor(Math.random() * 10)
+        delta = Math.floor(Math.random() * 20)
         p = dscale((idx + Math.floor(n / 100)) % 4)
+        p = p * (xscale x.lat) * (yscale x.long)
 
         value = x.value + delta * p
 
+
         {
+          lat: x.lat
+          long: x.long
           x: x.x
           y: x.y
           value: value
