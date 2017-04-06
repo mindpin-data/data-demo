@@ -6,6 +6,8 @@ class LineChartTitle extends Graph
     @c2 = '#578eff'
     @c3 = '#ff8711'
 
+    @number_color = '#ffde00'
+
     @draw_texts()
 
   draw_texts: ->
@@ -30,7 +32,7 @@ class LineChartTitle extends Graph
       .attr 'dy', '.33em'
       .text 889718890
       .style 'font-size', size * 1.5
-      .style 'fill', '#fcf926'
+      .style 'fill', @number_color
 
 
     texts
@@ -50,7 +52,7 @@ class LineChartTitle extends Graph
       .attr 'dy', '.33em'
       .text 142210067
       .style 'font-size', size * 1.5
-      .style 'fill', '#fcf926'
+      .style 'fill', @number_color
 
 
     size = 20

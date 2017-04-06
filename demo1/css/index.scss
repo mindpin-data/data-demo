@@ -1,7 +1,7 @@
 $text-color: mix(#1A2842, #fff, 40%);
 $title-color: mix(#1A2842, #fff, 20%);
 
-$BG-COLOR: #17243C;
+$BG-COLOR: #021225;
 
 body {
   background-color: $BG-COLOR;
@@ -14,7 +14,7 @@ body {
 * { box-sizing: border-box; }
 
 .paper {
-  background-color: rgba(black, 0.1);
+  // background-color: rgba(black, 0.1);
 }
 
 .tile {

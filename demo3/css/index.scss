@@ -1,7 +1,9 @@
 $text-color: mix(#1A2842, #fff, 40%);
 $title-color: mix(#1A2842, #fff, 20%);
 
-$BG-COLOR: #17243C;
+$BG-COLOR: #021225;
+
+$number-color: #ffde00;
 
 body {
   background-color: $BG-COLOR;
@@ -14,7 +16,7 @@ body {
 * { box-sizing: border-box; }
 
 .paper {
-  background-color: rgba(black, 0.1);
+  // background-color: rgba(black, 0.1);
 }
 
 .tile {
@@ -50,37 +52,42 @@ g text {
 }
 
 @keyframes running {
-  from {stroke-dashoffset: 6000;}
-  to {stroke-dashoffset: 0;}
+  from {stroke-dashoffset: 0;}
+  to {stroke-dashoffset: -1200;}
 }
 
 line.running, path.running {
+  opacity: 0.5;
   animation-name: running;
-  animation-duration: 120s;
+  animation-duration: 3s;
   animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  animation-iteration-count: 1;
 }
 
 @keyframes circlerunning {
   from {
-    r: 10;
+    r: 5;
     opacity: 1;
   }
   to {
-    r: 80;
-    opacity: 0.3;
+    r: 40;
+    opacity: 0.1;
   }
 }
 
 circle.warning {
   animation-name: circlerunning;
-  animation-duration: 1s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  animation-duration: 2s;
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
 }
 
 circle.warning.a {
-  animation-delay: .5s;
+  animation-delay: .3s;
+}
+
+circle.warning.b {
+  animation-delay: .6s;
 }
 
 @keyframes mpp {

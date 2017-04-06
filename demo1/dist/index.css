@@ -1,6 +1,6 @@
 @charset "UTF-8";
 body {
-  background-color: #17243C;
+  background-color: #021225;
   padding: 0;
   color: white;
   font-size: 16px;
@@ -8,9 +8,6 @@ body {
 
 * {
   box-sizing: border-box; }
-
-.paper {
-  background-color: rgba(0, 0, 0, 0.1); }
 
 .tile {
   background-color: rgba(255, 255, 255, 0.1);
