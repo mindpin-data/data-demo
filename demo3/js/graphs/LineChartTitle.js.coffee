@@ -21,7 +21,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text '产品总体销量'
-      .style 'font-size', size
+      .style 'font-size', "#{size}px"
       .style 'fill', '#ffffff'
 
 
@@ -31,7 +31,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text 889718890
-      .style 'font-size', size * 1.5
+      .style 'font-size', "#{size * 1.5}px"
       .style 'fill', @number_color
 
 
@@ -41,7 +41,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text '产品出口销量'
-      .style 'font-size', size
+      .style 'font-size', "#{size}px"
       .style 'fill', '#ffffff'
 
 
@@ -51,7 +51,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text 142210067
-      .style 'font-size', size * 1.5
+      .style 'font-size', "#{size * 1.5}px"
       .style 'fill', @number_color
 
 
@@ -70,7 +70,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '实际销量'
-      .style 'font-size', size
+      .style 'font-size', "#{size}px"
       .style 'fill', '#ffffff'
 
     texts
@@ -87,7 +87,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '预测销量'
-      .style 'font-size', size
+      .style 'font-size', "#{size}px"
       .style 'fill', '#ffffff'
 
     texts
@@ -104,7 +104,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '上年同比销量'
-      .style 'font-size', size
+      .style 'font-size', "#{size}px"
       .style 'fill', '#ffffff'
 
 BaseTile.register 'line-chart-title', LineChartTitle
