@@ -168,14 +168,20 @@
       this.xscale = d3.scaleLinear().domain([0, 11]).range([0, this.w]);
       this.yscale = d3.scaleLinear().domain([0, 100]).range([this.h, 0]);
       this.draw_axis();
-      return this.draw_lines();
+      this.draw_lines();
+      return jQuery(document).on('data-map:next-draw', (function(_this) {
+        return function() {
+          return _this.draw_lines();
+        };
+      })(this));
     };
 
     LineChart.prototype.draw_lines = function() {
-      var d, i, idx, j, k, len, len1, len2, line1, ref, ref1, ref2, results;
-      if (this.panel == null) {
-        this.panel = this.svg.append('g').attr('transform', "translate(150, 10)");
+      var _draw, line1;
+      if (this.panel != null) {
+        this.panel.remove();
       }
+      this.panel = this.svg.append('g').attr('transform', "translate(150, 10)");
       line1 = d3.line().x((function(_this) {
         return function(d, idx) {
           return _this.xscale(idx);
@@ -187,26 +193,24 @@
       })(this)).curve(d3.curveCatmullRom.alpha(0.5));
       this.panel.selectAll('path.pre-line').remove();
       this.panel.selectAll('circle').remove();
-      this.panel.append('path').datum(this.data2).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c3).style('fill', 'transparent').style('stroke-width', 2);
-      ref = this.data2;
-      for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
-        d = ref[idx];
-        this.panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c3);
-      }
-      this.panel.append('path').datum(this.data1).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c2).style('fill', 'transparent').style('stroke-width', 2).style('stroke-dasharray', '5 5').style('stroke-linecap', 'round');
-      ref1 = this.data1;
-      for (idx = j = 0, len1 = ref1.length; j < len1; idx = ++j) {
-        d = ref1[idx];
-        this.panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c2);
-      }
-      this.panel.append('path').datum(this.data0).attr('class', 'pre-line').attr('d', line1).style('stroke', this.c1).style('fill', 'transparent').style('stroke-width', 2);
-      ref2 = this.data0;
-      results = [];
-      for (idx = k = 0, len2 = ref2.length; k < len2; idx = ++k) {
-        d = ref2[idx];
-        results.push(this.panel.append('circle').attr('cx', this.xscale(idx)).attr('cy', this.yscale(d)).attr('r', 4).attr('fill', this.c1));
-      }
-      return results;
+      _draw = (function(_this) {
+        return function(data, color, dasharray) {
+          var _data, curve;
+          _data = data.map(function(x) {
+            return 0;
+          });
+          curve = _this.panel.append('path').datum(_data).attr('class', 'pre-line').attr('d', line1).style('stroke', color).style('fill', 'transparent').style('stroke-width', 2).style('stroke-dasharray', dasharray).style('stroke-linecap', 'round');
+          curve.datum(data).transition().duration(1000).attr('d', line1);
+          return _data.forEach(function(d, idx) {
+            var c;
+            c = _this.panel.append('circle').attr('cx', _this.xscale(idx)).attr('cy', _this.yscale(d)).attr('r', 4).attr('fill', color);
+            return c.transition().duration(1000).attr('cy', _this.yscale(data[idx]));
+          });
+        };
+      })(this);
+      _draw(this.data2, this.c3);
+      _draw(this.data1, this.c2, '5 5');
+      return _draw(this.data0, this.c1);
     };
 
     LineChart.prototype.draw_axis = function() {
@@ -253,17 +257,43 @@
       this.c2 = '#578eff';
       this.c3 = '#ff8711';
       this.number_color = '#ffde00';
-      return this.draw_texts();
+      this.draw_texts();
+      return jQuery(document).on('data-map:next-draw', (function(_this) {
+        return function() {
+          return _this.draw_texts();
+        };
+      })(this));
     };
 
     LineChartTitle.prototype.draw_texts = function() {
-      var size, texts;
-      texts = this.svg.append('g').style('transform', 'translate(1100px, 0px)');
+      var size, t1, t2, texts;
+      if (this.texts != null) {
+        this.texts.remove();
+      }
+      texts = this.texts = this.svg.append('g').style('transform', 'translate(1100px, 0px)');
       size = 40;
       texts.append('text').attr('x', -1050).attr('y', this.height / 2).attr('dy', '.33em').text('产品总体销量').style('font-size', size + "px").style('fill', '#ffffff');
-      texts.append('text').attr('x', -1050 + 270).attr('y', this.height / 2).attr('dy', '.33em').text(889718890).style('font-size', (size * 1.5) + "px").style('fill', this.number_color);
+      t1 = texts.append('text').attr('x', -1050 + 270).attr('y', this.height / 2).attr('dy', '.33em').text(889718890).style('font-size', (size * 1.5) + "px").style('fill', this.number_color);
+      jQuery({
+        n: 0
+      }).animate({
+        n: 889718890
+      }, {
+        step: function(now) {
+          return t1.text(~~now);
+        }
+      });
       texts.append('text').attr('x', -1050 + 600).attr('y', this.height / 2).attr('dy', '.33em').text('产品出口销量').style('font-size', size + "px").style('fill', '#ffffff');
-      texts.append('text').attr('x', -1050 + 600 + 270).attr('y', this.height / 2).attr('dy', '.33em').text(142210067).style('font-size', (size * 1.5) + "px").style('fill', this.number_color);
+      t2 = texts.append('text').attr('x', -1050 + 600 + 270).attr('y', this.height / 2).attr('dy', '.33em').text(142210067).style('font-size', (size * 1.5) + "px").style('fill', this.number_color);
+      jQuery({
+        n: 0
+      }).animate({
+        n: 142210067
+      }, {
+        step: function(now) {
+          return t2.text(~~now);
+        }
+      });
       size = 20;
       texts.append('rect').attr('x', 250).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', this.c1);
       texts.append('text').attr('x', 290).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('实际销量').style('font-size', size + "px").style('fill', '#ffffff');
@@ -282,11 +312,13 @@
 }).call(this);
 
 (function() {
-  var CityAnimate, PathMap, cn_cities, floop, max_number, plane_path, rand_item_of,
+  var CityAnimate, PathMap, cn_cities, floop, max_number, plane_path, rand_item_of, world_cities,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   plane_path = 'm25.21488,3.93375c-0.44355,0 -0.84275,0.18332 -1.17933,0.51592c-0.33397,0.33267 -0.61055,0.80884 -0.84275,1.40377c-0.45922,1.18911 -0.74362,2.85964 -0.89755,4.86085c-0.15655,1.99729 -0.18263,4.32223 -0.11741,6.81118c-5.51835,2.26427 -16.7116,6.93857 -17.60916,7.98223c-1.19759,1.38937 -0.81143,2.98095 -0.32874,4.03902l18.39971,-3.74549c0.38616,4.88048 0.94192,9.7138 1.42461,13.50099c-1.80032,0.52703 -5.1609,1.56679 -5.85232,2.21255c-0.95496,0.88711 -0.95496,3.75718 -0.95496,3.75718l7.53,-0.61316c0.17743,1.23545 0.28701,1.95767 0.28701,1.95767l0.01304,0.06557l0.06002,0l0.13829,0l0.0574,0l0.01043,-0.06557c0,0 0.11218,-0.72222 0.28961,-1.95767l7.53164,0.61316c0,0 0,-2.87006 -0.95496,-3.75718c-0.69044,-0.64577 -4.05363,-1.68813 -5.85133,-2.21516c0.48009,-3.77545 1.03061,-8.58921 1.42198,-13.45404l18.18207,3.70115c0.48009,-1.05806 0.86881,-2.64965 -0.32617,-4.03902c-0.88969,-1.03062 -11.81147,-5.60054 -17.39409,-7.89352c0.06524,-2.52287 0.04175,-4.88024 -0.1148,-6.89989l0,-0.00476c-0.15655,-1.99844 -0.44094,-3.6683 -0.90277,-4.8561c-0.22699,-0.59493 -0.50356,-1.07111 -0.83754,-1.40377c-0.33658,-0.3326 -0.73578,-0.51592 -1.18194,-0.51592l0,0l-0.00001,0l0,0z';
+
+  plane_path = "M25 0 L50 50 L0 50 z";
 
   cn_cities = [
     {
@@ -452,6 +484,100 @@
     }
   ];
 
+  world_cities = [
+    {
+      name: '莫斯科',
+      number: 17355291,
+      lat: 37.4,
+      long: 55.5
+    }, {
+      name: '柏林　',
+      number: 17355291,
+      lat: 13.3,
+      long: 52.3
+    }, {
+      name: '伦敦　',
+      number: 17355291,
+      lat: 0.1,
+      long: 51.3
+    }, {
+      name: '巴黎　',
+      number: 17355291,
+      lat: 2.2,
+      long: 48.5
+    }, {
+      name: '罗马　',
+      number: 17355291,
+      lat: 12.3,
+      long: 41.5
+    }, {
+      name: '华盛顿',
+      number: 17355291,
+      lat: -77.0,
+      long: 38.5
+    }, {
+      name: '首尔　',
+      number: 17355291,
+      lat: 126.1,
+      long: 37.3
+    }, {
+      name: '东京　',
+      number: 17355291,
+      lat: 139.5,
+      long: 35.4
+    }, {
+      name: '洛杉矶',
+      number: 17355291,
+      lat: -118.2,
+      long: 34.5
+    }, {
+      name: '新加坡',
+      number: 17355291,
+      lat: 103.5,
+      long: 1.2
+    }, {
+      name: '雅加达　　',
+      number: 17355291,
+      lat: 106.5,
+      long: -6.1
+    }, {
+      name: '里约热内卢',
+      number: 17355291,
+      lat: -43.2,
+      long: -22.5
+    }, {
+      name: '圣地亚哥　',
+      number: 17355291,
+      lat: -70.4,
+      long: -33.3
+    }, {
+      name: '悉尼　　　',
+      number: 17355291,
+      lat: 151.1,
+      long: -33.3
+    }, {
+      name: '奥克兰　　',
+      number: 17355291,
+      lat: 174.5,
+      long: -36.5
+    }, {
+      name: '墨尔本　　',
+      number: 17355291,
+      lat: 144.6,
+      long: -37.5
+    }, {
+      name: '新德里　　',
+      number: 17355291,
+      lat: 77.2,
+      long: 28.5
+    }, {
+      name: '开普敦　　',
+      number: 17355291,
+      lat: 19.0,
+      long: -34.0
+    }
+  ];
+
   max_number = 0;
 
   cn_cities.forEach(function(x) {
@@ -480,7 +606,16 @@
       this.MAP_STROKE_COLOR = '#021225';
       this.MAP_FILL_COLOR = '#323c48';
       this.svg = this.draw_svg();
-      return this.load_data();
+      this.load_data();
+      return jQuery(document).on('data-map:next-draw', (function(_this) {
+        return function() {
+          return _this.next_draw();
+        };
+      })(this));
+    };
+
+    PathMap.prototype.next_draw = function() {
+      return this.random_city();
     };
 
     PathMap.prototype.load_data = function() {
@@ -488,9 +623,8 @@
         return function(error, _data) {
           _this.features = _data.features;
           _this.draw_map();
-          _this.draw_circles();
-          _this.random_city();
-          return _this.random_country();
+          _this.draw_heatmap();
+          return _this.random_city();
         };
       })(this));
     };
@@ -506,11 +640,13 @@
     PathMap.prototype._draw_map = function() {
       var countries;
       this.g_map.selectAll('.country').remove();
-      return countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', this.MAP_STROKE_COLOR).style('stroke-width', 2).style('fill', this.MAP_FILL_COLOR);
+      return countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', this.MAP_STROKE_COLOR).style('stroke-width', 1).style('fill', this.MAP_FILL_COLOR);
     };
 
     PathMap.prototype.draw_circles = function() {
-      return cn_cities.forEach((function(_this) {
+      var cities;
+      cities = [].concat(cn_cities).concat(world_cities);
+      return cities.forEach((function(_this) {
         return function(p) {
           var circle, oscale, ref, x, y;
           ref = _this.projection([p.lat, p.long]), x = ref[0], y = ref[1];
@@ -520,26 +656,57 @@
       })(this));
     };
 
-    PathMap.prototype.random_city = function() {
-      return floop((function(_this) {
-        return function() {
-          var p, ref, x, y;
-          p = rand_item_of(cn_cities);
-          ref = _this.projection([p.lat, p.long]), x = ref[0], y = ref[1];
-          return new CityAnimate(_this, x, y, '#cff1ae', 4).run();
+    PathMap.prototype.draw_heatmap = function() {
+      var cities, data, heatmapInstance, points;
+      heatmapInstance = h337.create({
+        container: jQuery('#heatmap')[0],
+        radius: 8,
+        gradient: {
+          '0.0': '#34cee9',
+          '0.3': '#34cee9',
+          '1.0': 'white'
+        }
+      });
+      cities = [].concat(cn_cities).concat(world_cities);
+      points = cities.map((function(_this) {
+        return function(c) {
+          var ref, x, y;
+          ref = _this.projection([c.lat, c.long]), x = ref[0], y = ref[1];
+          return {
+            x: ~~x,
+            y: ~~y,
+            value: c.number
+          };
         };
-      })(this), 2000);
+      })(this));
+      data = {
+        max: max_number,
+        data: points
+      };
+      console.log(points);
+      return heatmapInstance.setData(data);
     };
 
-    PathMap.prototype.random_country = function() {
-      return floop((function(_this) {
+    PathMap.prototype.random_city = function() {
+      this._r(cn_cities, '#cff1ae');
+      this._r(cn_cities, '#cff1ae');
+      this._r(world_cities, '#f1c4ae');
+      this._r(world_cities, '#f1c4ae');
+      return setTimeout((function(_this) {
         return function() {
-          var feature, ref, x, y;
-          feature = rand_item_of(_this.features);
-          ref = _this.path.centroid(feature), x = ref[0], y = ref[1];
-          return new CityAnimate(_this, x, y, '#f1c4ae', 4).run();
+          _this._r(cn_cities, '#cff1ae');
+          _this._r(cn_cities, '#cff1ae');
+          _this._r(world_cities, '#f1c4ae');
+          return _this._r(world_cities, '#f1c4ae');
         };
-      })(this), 3000);
+      })(this), 2500);
+    };
+
+    PathMap.prototype._r = function(arr, color) {
+      var p, ref, x, y;
+      p = rand_item_of(arr);
+      ref = this.projection([p.lat, p.long]), x = ref[0], y = ref[1];
+      return new CityAnimate(this, x, y, color, 4).run();
     };
 
     return PathMap;
@@ -547,11 +714,11 @@
   })(Graph);
 
   CityAnimate = (function() {
-    function CityAnimate(map, x1, y1, color, width) {
+    function CityAnimate(map, x1, y1, color1, width) {
       this.map = map;
       this.x = x1;
       this.y = y1;
-      this.color = color;
+      this.color = color1;
       this.width = width;
       this.g_map = this.map.g_map;
     }
@@ -577,15 +744,16 @@
     };
 
     CityAnimate.prototype.fly = function() {
-      var dx, dy, l, path, r, scale, xoff, yoff;
+      var count, dx, dy, l, path, r, scale, xoff, yoff;
       path = this.route.node();
       l = path.getTotalLength();
       dx = this.x - this.gyx;
       dy = this.y - this.gyy;
       r = 90 - Math.atan2(-dy, dx) * 180 / Math.PI;
-      scale = 0.5;
-      xoff = 48 * scale * 0.5;
-      yoff = 44 * scale * 0.5;
+      scale = 0.3;
+      xoff = 50 * scale * 0.5;
+      yoff = 50 * scale * 0.5;
+      count = 0;
       return jQuery({
         t: 0
       }).animate({
@@ -595,12 +763,15 @@
           return function(now, fx) {
             var p;
             p = path.getPointAtLength(now * l);
-            _this.route_circle_wave(p.x, p.y);
+            count += 1;
+            if (count % 4 === 0) {
+              _this.route_circle_wave(p.x, p.y);
+            }
             return _this.plane.attr('transform', "translate(" + (p.x - xoff) + ", " + (p.y - yoff) + ") rotate(" + r + ", " + xoff + ", " + yoff + ") scale(" + scale + ")");
           };
         })(this),
-        duration: l * 10,
-        easing: 'easeOutQuad',
+        duration: Math.sqrt(l) * 150,
+        easing: 'linear',
         done: (function(_this) {
           return function() {
             _this.route.remove();
@@ -625,10 +796,10 @@
 
     CityAnimate.prototype.route_circle_wave = function(x, y) {
       var circle;
-      circle = this.g_map.insert('circle', '.plane').attr('cx', x).attr('cy', y).attr('stroke', this.color).attr('stroke-width', this.width).attr('fill', 'transparent');
+      circle = this.g_map.insert('circle', '.plane').attr('cx', x).attr('cy', y).attr('stroke', this.color).attr('stroke-width', this.width).attr('fill', this.color);
       return jQuery({
         r: 0,
-        o: 0.5
+        o: 0.9
       }).delay(100).animate({
         r: 5,
         o: 0
@@ -641,7 +812,7 @@
             return circle.style('opacity', now);
           }
         },
-        duration: 1000,
+        duration: 2000,
         easing: 'easeOutQuad',
         done: function() {
           return circle.remove();
@@ -691,7 +862,10 @@
 
 (function() {
   jQuery(function() {
-    return BaseTile.paper_init();
+    BaseTile.paper_init();
+    return setInterval(function() {
+      return jQuery(document).trigger('data-map:next-draw');
+    }, 5000);
   });
 
 }).call(this);

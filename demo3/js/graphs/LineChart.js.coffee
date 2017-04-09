@@ -24,11 +24,14 @@ class LineChart extends Graph
     @draw_axis()
     @draw_lines()
 
+    jQuery(document).on 'data-map:next-draw', =>
+      @draw_lines()
 
   draw_lines: ->
-    if not @panel?
-      @panel = @svg.append('g')
-        .attr 'transform', "translate(150, 10)"
+    @panel.remove() if @panel?
+
+    @panel = @svg.append('g')
+      .attr 'transform', "translate(150, 10)"
 
     line1 = d3.line()
       .x (d, idx)=> @xscale idx
@@ -38,53 +41,41 @@ class LineChart extends Graph
     @panel.selectAll('path.pre-line').remove()
     @panel.selectAll('circle').remove()
 
-    @panel.append 'path'
-      .datum @data2
-      .attr 'class', 'pre-line'
-      .attr 'd', line1
-      .style 'stroke', @c3
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 2
+    _draw = (data, color, dasharray)=>
+      _data = data.map (x)-> 0
 
-    for d, idx in @data2
-      @panel.append 'circle'
-        .attr 'cx', @xscale idx
-        .attr 'cy', @yscale d
-        .attr 'r', 4
-        .attr 'fill', @c3
+      curve = @panel.append 'path'
+        .datum _data
+        .attr 'class', 'pre-line'
+        .attr 'd', line1
+        .style 'stroke', color
+        .style 'fill', 'transparent'
+        .style 'stroke-width', 2
+        .style 'stroke-dasharray', dasharray
+        .style 'stroke-linecap', 'round'
 
-    @panel.append 'path'
-      .datum @data1
-      .attr 'class', 'pre-line'
-      .attr 'd', line1
-      .style 'stroke', @c2
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 2
-      .style 'stroke-dasharray', '5 5'
-      .style 'stroke-linecap', 'round'
-
-    for d, idx in @data1
-      @panel.append 'circle'
-        .attr 'cx', @xscale idx
-        .attr 'cy', @yscale d
-        .attr 'r', 4
-        .attr 'fill', @c2
+      curve.datum data
+        .transition()
+        .duration 1000
+        .attr 'd', line1
 
 
-    @panel.append 'path'
-      .datum @data0
-      .attr 'class', 'pre-line'
-      .attr 'd', line1
-      .style 'stroke', @c1
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 2
+      _data.forEach (d, idx)=>
+        c = @panel.append 'circle'
+          .attr 'cx', @xscale idx
+          .attr 'cy', @yscale d
+          .attr 'r', 4
+          .attr 'fill', color
 
-    for d, idx in @data0
-      @panel.append 'circle'
-        .attr 'cx', @xscale idx
-        .attr 'cy', @yscale d
-        .attr 'r', 4
-        .attr 'fill', @c1
+        c
+          .transition()
+          .duration 1000
+          .attr 'cy', @yscale data[idx]
+
+
+    _draw @data2, @c3
+    _draw @data1, @c2, '5 5'
+    _draw @data0, @c1
 
 
   draw_axis: ->

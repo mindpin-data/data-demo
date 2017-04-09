@@ -10,8 +10,13 @@ class LineChartTitle extends Graph
 
     @draw_texts()
 
+    jQuery(document).on 'data-map:next-draw', =>
+      @draw_texts()
+
   draw_texts: ->
-    texts = @svg.append('g')
+    @texts.remove() if @texts?
+
+    texts = @texts = @svg.append('g')
       .style 'transform', 'translate(1100px, 0px)'
 
     size = 40
@@ -25,7 +30,7 @@ class LineChartTitle extends Graph
       .style 'fill', '#ffffff'
 
 
-    texts
+    t1 = texts
       .append 'text'
       .attr 'x', -1050 + 270
       .attr 'y', @height / 2
@@ -33,6 +38,13 @@ class LineChartTitle extends Graph
       .text 889718890
       .style 'font-size', "#{size * 1.5}px"
       .style 'fill', @number_color
+
+    jQuery({n: 0}).animate({n: 889718890}
+      {
+        step: (now)->
+          t1.text ~~now
+      }
+    )
 
 
     texts
@@ -45,7 +57,7 @@ class LineChartTitle extends Graph
       .style 'fill', '#ffffff'
 
 
-    texts
+    t2 = texts
       .append 'text'
       .attr 'x', -1050 + 600 + 270
       .attr 'y', @height / 2
@@ -53,6 +65,13 @@ class LineChartTitle extends Graph
       .text 142210067
       .style 'font-size', "#{size * 1.5}px"
       .style 'fill', @number_color
+
+    jQuery({n: 0}).animate({n: 142210067}
+      {
+        step: (now)->
+          t2.text ~~now
+      }
+    )
 
 
     size = 20
