@@ -169,8 +169,8 @@
     AreasBar.prototype.draw_infos = function() {
       var panel;
       panel = this.svg.append('g').style('transform', 'translate(-30px, 70px)');
-      this.draw_info(panel, 'img/大雨.png', '遵义', '近期大雨', '2017-03-02');
-      return this.draw_info(panel, 'img/大风.png', '郑州', '近期大风', '2017-03-02', 60);
+      this.draw_info(panel, 'img/dayu.png', '遵义', '近期大雨', '2017-03-02');
+      return this.draw_info(panel, 'img/dafeng.png', '郑州', '近期大风', '2017-03-02', 60);
     };
 
     AreasBar.prototype.draw_info = function(panel, img, city, weather, date, y) {
@@ -179,7 +179,7 @@
         y = 0;
       }
       size = 24;
-      panel.append('image').attr('x', 80).attr('y', size / 2 + y).attr('href', img).attr('height', 40 + 'px').attr('width', 40 + 'px');
+      panel.append('image').attr('x', 80).attr('y', size / 2 + y).attr('xlink:href', img).attr('height', 40 + 'px').attr('width', 40 + 'px');
       panel.append('text').attr('x', 150).attr('y', size / 2 + 20 + y).attr('dy', '.33em').text(city).style('font-size', size + 'px').style('fill', '#ffffff');
       panel.append('text').attr('x', 220).attr('y', size / 2 + 20 + y).attr('dy', '.33em').text(weather).style('font-size', size + 'px').style('fill', '#f66');
       return panel.append('text').attr('x', 340).attr('y', size / 2 + 20 + y).attr('dy', '.33em').text(date).style('font-size', size + 'px').style('fill', '#ffde00');
@@ -406,7 +406,7 @@
       this.svg.select('g.flag').remove();
       flag = this.svg.append('g').attr('class', 'flag');
       flag.append('circle').attr('r', this.height / 4).attr('cx', 80).attr('cy', this.height / 2).attr('fill', 'rgb(255, 87, 87)');
-      return flag.append('image').attr('href', "img/icon-lajiao1.png").attr('height', this.height / 6 * 2).attr('width', this.height / 6 * 2).attr('x', 80 - this.height / 6).attr('y', this.height / 2 - this.height / 6);
+      return flag.append('image').attr('xlink:href', "img/icon-lajiao1.png").attr('height', this.height / 6 * 2).attr('width', this.height / 6 * 2).attr('x', 80 - this.height / 6).attr('y', this.height / 2 - this.height / 6);
     };
 
     OneArea.prototype.draw_texts = function() {
@@ -429,7 +429,7 @@
       texts.append('text').attr('x', 170).attr('y', size / 2 + 10 + y).attr('dy', '.33em').text("万元 / 吨").style('font-size', size + 'px').style('fill', '#ffffff');
       if (flag) {
         texts.append('text').attr('x', 270).attr('y', size / 2 + 10 + y).attr('dy', '.33em').text("2.34‰").style('font-size', size + 'px').style('fill', '#ffffff');
-        return texts.append('image').attr('x', 330).attr('y', size / 2 + 10 - size / 2 + y).attr('href', 'img/downicon1.png').attr('height', size).attr('width', size);
+        return texts.append('image').attr('x', 330).attr('y', size / 2 + 10 - size / 2 + y).attr('xlink:href', 'img/downicon1.png').attr('height', size).attr('width', size);
       }
     };
 
@@ -632,9 +632,9 @@
         })(this));
       }
       ref1 = this.projection([113.7, 34.6]), x = ref1[0], y = ref1[1];
-      new CityAnimate(this, x, y, '#ff9999', 8, 'img/大雨.png').run();
+      new CityAnimate(this, x, y, '#ff9999', 8, 'img/dayu.png').run();
       ref2 = this.projection([106.9, 27.7]), x = ref2[0], y = ref2[1];
-      return new CityAnimate(this, x, y, '#ff9999', 8, 'img/大风.png').run();
+      return new CityAnimate(this, x, y, '#ff9999', 8, 'img/dafeng.png').run();
     };
 
     return PathMap;
@@ -653,7 +653,7 @@
     }
 
     CityAnimate.prototype.run = function() {
-      this.g_map.append('image').attr('class', 'map-point').attr('href', this.img).attr('x', this.x).attr('y', this.y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
+      this.g_map.append('image').attr('class', 'map-point').attr('xlink:href', this.img).attr('x', this.x).attr('y', this.y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
       return this.wave();
     };
 

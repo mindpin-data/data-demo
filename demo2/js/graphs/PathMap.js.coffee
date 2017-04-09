@@ -145,10 +145,10 @@ class PathMap extends Graph
           return 'rgba(51, 255, 51, 0.7)' if d.type == 3
 
     [x, y] = @projection [113.7, 34.6]
-    new CityAnimate(@, x, y, '#ff9999', 8, 'img/大雨.png').run()
+    new CityAnimate(@, x, y, '#ff9999', 8, 'img/dayu.png').run()
 
     [x, y] = @projection [106.9, 27.7]
-    new CityAnimate(@, x, y, '#ff9999', 8, 'img/大风.png').run()
+    new CityAnimate(@, x, y, '#ff9999', 8, 'img/dafeng.png').run()
 
 
 class CityAnimate
@@ -158,7 +158,7 @@ class CityAnimate
   run: ->
     @g_map.append 'image'
       .attr 'class', 'map-point'
-      .attr 'href', @img
+      .attr 'xlink:href', @img
       .attr 'x', @x
       .attr 'y', @y
       .style 'transform', 'translate(-30px, -50px)'

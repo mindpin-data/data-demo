@@ -21,8 +21,8 @@ class AreasBar extends Graph
       .style 'transform', 'translate(-30px, 70px)'
 
 
-    @draw_info panel, 'img/大雨.png', '遵义', '近期大雨', '2017-03-02'
-    @draw_info panel, 'img/大风.png', '郑州', '近期大风', '2017-03-02', 60
+    @draw_info panel, 'img/dayu.png', '遵义', '近期大雨', '2017-03-02'
+    @draw_info panel, 'img/dafeng.png', '郑州', '近期大风', '2017-03-02', 60
 
   draw_info: (panel, img, city, weather, date, y = 0)->
 
@@ -32,7 +32,7 @@ class AreasBar extends Graph
       .append 'image'
       .attr 'x', 80
       .attr 'y', size / 2 + y
-      .attr 'href', img
+      .attr 'xlink:href', img
       .attr 'height', 40 + 'px'
       .attr 'width', 40 + 'px'
 
