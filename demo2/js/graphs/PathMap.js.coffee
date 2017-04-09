@@ -134,15 +134,16 @@ class PathMap extends Graph
           if d.type == @current_product then 1 else 0.05
 
   _draw_warning: ->
+    console.log 'warning'
     [x, y] = @projection [113.7, 34.6]
-    new CityAnimate(@, x, y, '#ffffff', 8, 'img/dayu.png').run()
+    new CityAnimate(@, x, y, '#ffffff', 8, 'img/dafeng.png', '郑州：近期大风').run()
 
     [x, y] = @projection [106.9, 27.7]
-    new CityAnimate(@, x, y, '#ffffff', 8, 'img/dafeng.png').run()
+    new CityAnimate(@, x, y, '#ffffff', 8, 'img/dayu.png', '遵义：近期大雨').run()
 
 
 class CityAnimate
-  constructor: (@map, @x, @y, @color, @width, @img)->
+  constructor: (@map, @x, @y, @color, @width, @img, @text)->
     @layer_icon = @map.layer_icon
     @layer_circles = @map.layer_circles
 
@@ -155,6 +156,15 @@ class CityAnimate
       .style 'transform', "translate(-#{w / 2}px, -#{w / 2}px)"
       .attr 'width', w
       .attr 'height', w
+
+    size = 20
+    @layer_icon.append 'text'
+      .attr 'x', @x + 50
+      .attr 'y', @y
+      .attr 'dy', '.33em'
+      .text @text
+      .style 'font-size', size + 'px'
+      .style 'fill', '#f66'
 
     @wave()
 
@@ -178,7 +188,7 @@ class CityAnimate
       .attr 'stroke-width', @width
       .attr 'fill', 'transparent'
 
-    jQuery({ r: 10, o: 1, w: @width }).delay(delay).animate({ r: 100, o: 0.8, w: 0 }
+    jQuery({ r: 10, o: 1, w: @width }).delay(delay).animate({ r: 100, o: 0.6, w: 0 }
       {
         step: (now, fx)->
           if fx.prop == 'r'

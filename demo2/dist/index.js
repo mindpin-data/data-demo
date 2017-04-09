@@ -719,10 +719,11 @@
 
     PathMap.prototype._draw_warning = function() {
       var ref, ref1, x, y;
+      console.log('warning');
       ref = this.projection([113.7, 34.6]), x = ref[0], y = ref[1];
-      new CityAnimate(this, x, y, '#ffffff', 8, 'img/dayu.png').run();
+      new CityAnimate(this, x, y, '#ffffff', 8, 'img/dafeng.png', '郑州：近期大风').run();
       ref1 = this.projection([106.9, 27.7]), x = ref1[0], y = ref1[1];
-      return new CityAnimate(this, x, y, '#ffffff', 8, 'img/dafeng.png').run();
+      return new CityAnimate(this, x, y, '#ffffff', 8, 'img/dayu.png', '遵义：近期大雨').run();
     };
 
     return PathMap;
@@ -730,21 +731,24 @@
   })(Graph);
 
   CityAnimate = (function() {
-    function CityAnimate(map, x1, y1, color1, width, img) {
+    function CityAnimate(map, x1, y1, color1, width, img, text1) {
       this.map = map;
       this.x = x1;
       this.y = y1;
       this.color = color1;
       this.width = width;
       this.img = img;
+      this.text = text1;
       this.layer_icon = this.map.layer_icon;
       this.layer_circles = this.map.layer_circles;
     }
 
     CityAnimate.prototype.run = function() {
-      var w;
+      var size, w;
       w = 60;
       this.layer_icon.append('image').attr('xlink:href', this.img).attr('x', this.x).attr('y', this.y).style('transform', "translate(-" + (w / 2) + "px, -" + (w / 2) + "px)").attr('width', w).attr('height', w);
+      size = 20;
+      this.layer_icon.append('text').attr('x', this.x + 50).attr('y', this.y).attr('dy', '.33em').text(this.text).style('font-size', size + 'px').style('fill', '#f66');
       return this.wave();
     };
 
@@ -770,7 +774,7 @@
         w: this.width
       }).delay(delay).animate({
         r: 100,
-        o: 0.8,
+        o: 0.6,
         w: 0
       }, {
         step: function(now, fx) {
