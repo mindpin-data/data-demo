@@ -127,7 +127,7 @@ class PathMap extends Graph
       @g_map.selectAll('image').remove()
       @g_map.append 'image'
         .attr 'class', 'map-point'
-        .attr 'href', 'img/mapicon1.png'
+        .attr 'xlink:href', 'img/mapicon1.png'
         .attr 'x', x
         .attr 'y', y
         .style 'transform', 'translate(-30px, -50px)'
@@ -202,6 +202,8 @@ class CityAnimate
     @circle_wave(0)
     @circle_wave(500)
     @circle_wave(1000)
+    @circle_wave(1500)
+    @circle_wave(2000)
 
   # 在指定的位置用指定的颜色显示扩散光圈
   circle_wave: (delay)->

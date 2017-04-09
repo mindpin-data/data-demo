@@ -38,8 +38,8 @@ class AreasBar extends Graph
     w = @width * 0.8
     for f, idx in farr
       flag = flags
-        .append('image')
-        .attr 'href', "img/#{f}.png"
+        .append 'image'
+        .attr 'xlink:href', "img/#{f}.png"
         .attr 'height', h - 30
         .attr 'width', (h - 30) / 2 * 3
         .attr 'x', 0

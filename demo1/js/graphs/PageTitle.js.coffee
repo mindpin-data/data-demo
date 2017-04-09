@@ -7,8 +7,7 @@ class PageTitle extends Graph
     @draw_points()
 
   draw_title: ->
-    title = @svg.append('g')
-      .append 'text'
+    title = @svg.append 'text'
       .attr 'x', 70 + 30
       .attr 'y', 10 + @TEXT_SIZE / 2
       .attr 'dy', '.33em'
@@ -17,9 +16,8 @@ class PageTitle extends Graph
       .style 'fill', '#aebbcb'
 
   draw_points: ->
-    points = @svg.append('g')
-      .append 'image'
-      .attr 'href', 'img/title-points.png'
+    points = @svg.append 'image'
+      .attr 'xlink:href', 'img/title-points.png'
       .attr 'width', @TEXT_SIZE
       .attr 'height', @TEXT_SIZE
       .attr 'x', 10

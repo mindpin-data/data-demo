@@ -180,7 +180,7 @@
       results = [];
       for (idx = i = 0, len = farr.length; i < len; idx = ++i) {
         f = farr[idx];
-        flag = flags.append('image').attr('href', "img/" + f + ".png").attr('height', h - 30).attr('width', (h - 30) / 2 * 3).attr('x', 0).attr('y', h * idx + 30);
+        flag = flags.append('image').attr('xlink:href', "img/" + f + ".png").attr('height', h - 30).attr('width', (h - 30) / 2 * 3).attr('x', 0).attr('y', h * idx + 30);
         offl = 90;
         amount = amounts[idx];
         bh = h - 40;
@@ -465,7 +465,7 @@
       var flag;
       this.svg.select('g.flag').remove();
       flag = this.svg.append('g').attr('class', 'flag');
-      return flag.append('image').attr('href', "img/" + this.current_area + ".png").attr('height', this.height - 60).attr('width', (this.height - 60) / 2 * 3).attr('x', 0).attr('y', 30);
+      return flag.append('image').attr('xlink:href', "img/" + this.current_area + ".png").attr('height', this.height - 60).attr('width', (this.height - 60) / 2 * 3).attr('x', 0).attr('y', 30);
     };
 
     OneArea.prototype.draw_texts = function() {
@@ -478,7 +478,7 @@
       texts.append('text').attr('x', 0).attr('y', size / 2 + size + 40).attr('dy', '.33em').text(area_data[this.current_area].d).style('font-size', size1 + 'px').style('fill', '#ffff05');
       size2 = 40;
       texts.append('text').attr('x', 0).attr('y', size / 2 + size + 34 + size1 + 30).attr('dy', '.33em').text("同比 " + area_data[this.current_area].p + "%").style('font-size', size2 + 'px').style('fill', '#ffffff');
-      return texts.append('image').attr('x', 215).attr('y', size / 2 + size + 34 + size1 + 30 - size2 / 2).attr('href', 'img/upicon1.png').attr('height', size2).attr('width', size2);
+      return texts.append('image').attr('x', 215).attr('y', size / 2 + size + 34 + size1 + 30 - size2 / 2).attr('xlink:href', 'img/upicon1.png').attr('height', size2).attr('width', size2);
     };
 
     return OneArea;
@@ -510,12 +510,12 @@
 
     PageTitle.prototype.draw_title = function() {
       var title;
-      return title = this.svg.append('g').append('text').attr('x', 70 + 30).attr('y', 10 + this.TEXT_SIZE / 2).attr('dy', '.33em').text('一带一路国家销售情况监控').style('font-size', this.TEXT_SIZE + 'px').style('fill', '#aebbcb');
+      return title = this.svg.append('text').attr('x', 70 + 30).attr('y', 10 + this.TEXT_SIZE / 2).attr('dy', '.33em').text('一带一路国家销售情况监控').style('font-size', this.TEXT_SIZE + 'px').style('fill', '#aebbcb');
     };
 
     PageTitle.prototype.draw_points = function() {
       var points;
-      return points = this.svg.append('g').append('image').attr('href', 'img/title-points.png').attr('width', this.TEXT_SIZE).attr('height', this.TEXT_SIZE).attr('x', 10).attr('y', 10).style('opacity', '0.5');
+      return points = this.svg.append('image').attr('xlink:href', 'img/title-points.png').attr('width', this.TEXT_SIZE).attr('height', this.TEXT_SIZE).attr('x', 10).attr('y', 10).style('opacity', '0.5');
     };
 
     return PageTitle;
@@ -729,7 +729,7 @@
         ref = this.path.centroid(feature), x = ref[0], y = ref[1];
         new CityAnimate(this, x, y, '#ff9999', 8).run();
         this.g_map.selectAll('image').remove();
-        return this.g_map.append('image').attr('class', 'map-point').attr('href', 'img/mapicon1.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
+        return this.g_map.append('image').attr('class', 'map-point').attr('xlink:href', 'img/mapicon1.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
       }
     };
 
@@ -781,7 +781,9 @@
     CityAnimate.prototype.wave = function() {
       this.circle_wave(0);
       this.circle_wave(500);
-      return this.circle_wave(1000);
+      this.circle_wave(1000);
+      this.circle_wave(1500);
+      return this.circle_wave(2000);
     };
 
     CityAnimate.prototype.circle_wave = function(delay) {

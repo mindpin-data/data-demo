@@ -462,12 +462,12 @@
 
     PageTitle.prototype.draw_title = function() {
       var title;
-      return title = this.svg.append('g').append('text').attr('x', 70 + 30).attr('y', 10 + this.TEXT_SIZE / 2).attr('dy', '.33em').text('原材料产地监控').style('font-size', this.TEXT_SIZE + 'px').style('fill', '#aebbcb');
+      return title = this.svg.append('text').attr('x', 70 + 30).attr('y', 10 + this.TEXT_SIZE / 2).attr('dy', '.33em').text('原材料产地监控').style('font-size', this.TEXT_SIZE + 'px').style('fill', '#aebbcb');
     };
 
     PageTitle.prototype.draw_points = function() {
       var points;
-      return points = this.svg.append('g').append('image').attr('href', 'img/title-points.png').attr('width', this.TEXT_SIZE).attr('height', this.TEXT_SIZE).attr('x', 10).attr('y', 10).style('opacity', '0.5');
+      return points = this.svg.append('image').attr('xlink:href', 'img/title-points.png').attr('width', this.TEXT_SIZE).attr('height', this.TEXT_SIZE).attr('x', 10).attr('y', 10).style('opacity', '0.5');
     };
 
     return PageTitle;
