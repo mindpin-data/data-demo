@@ -477,6 +477,8 @@
     }
 
     PathMap.prototype.draw = function() {
+      this.MAP_STROKE_COLOR = '#021225';
+      this.MAP_FILL_COLOR = '#323c48';
       this.svg = this.draw_svg();
       return this.load_data();
     };
@@ -504,7 +506,7 @@
     PathMap.prototype._draw_map = function() {
       var countries;
       this.g_map.selectAll('.country').remove();
-      return countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', '#021225').style('stroke-width', 1).style('fill', '#323c48');
+      return countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', this.MAP_STROKE_COLOR).style('stroke-width', 2).style('fill', this.MAP_FILL_COLOR);
     };
 
     PathMap.prototype.draw_circles = function() {

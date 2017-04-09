@@ -156,22 +156,33 @@
 
     AreasBar.prototype.draw = function() {
       this.svg = this.draw_svg();
-      return this.draw_flags();
+      this.draw_stitle();
+      return this.draw_infos();
     };
 
-    AreasBar.prototype.draw_flags = function() {
-      var panel, size;
-      this.svg.select('g.flag').remove();
-      panel = this.svg.append('g').attr('class', 'flag');
+    AreasBar.prototype.draw_stitle = function() {
+      var size;
       size = 24;
-      panel.append('image').attr('x', 80).attr('y', size / 2).attr('href', 'img/大雨.png').attr('height', 40);
-      panel.append('image').attr('x', 80).attr('y', size / 2 + 60).attr('href', 'img/大风.png').attr('height', 40);
-      panel.append('text').attr('x', 150).attr('y', size / 2 + 20).attr('dy', '.33em').text("遵义").style('font-size', size).style('fill', '#ffffff');
-      panel.append('text').attr('x', 220).attr('y', size / 2 + 20).attr('dy', '.33em').text("近期大雨").style('font-size', size).style('fill', '#f66');
-      panel.append('text').attr('x', 380).attr('y', size / 2 + 20).attr('dy', '.33em').text("2017-03-02").style('font-size', size).style('fill', '#ff6');
-      panel.append('text').attr('x', 150).attr('y', size / 2 + 80).attr('dy', '.33em').text("郑州").style('font-size', size).style('fill', '#ffffff');
-      panel.append('text').attr('x', 220).attr('y', size / 2 + 80).attr('dy', '.33em').text("近期大风").style('font-size', size).style('fill', '#f66');
-      return panel.append('text').attr('x', 380).attr('y', size / 2 + 70).attr('dy', '.33em').text("2017-03-02").style('font-size', size).style('fill', '#ff6');
+      return this.svg.append('text').attr('x', 50).attr('y', size / 2 + 30).attr('dy', '.33em').text("原料产地自然灾害预警").style('font-size', size + 'px').style('fill', '#ffffff');
+    };
+
+    AreasBar.prototype.draw_infos = function() {
+      var panel;
+      panel = this.svg.append('g').style('transform', 'translate(-30px, 70px)');
+      this.draw_info(panel, 'img/大雨.png', '遵义', '近期大雨', '2017-03-02');
+      return this.draw_info(panel, 'img/大风.png', '郑州', '近期大风', '2017-03-02', 60);
+    };
+
+    AreasBar.prototype.draw_info = function(panel, img, city, weather, date, y) {
+      var size;
+      if (y == null) {
+        y = 0;
+      }
+      size = 24;
+      panel.append('image').attr('x', 80).attr('y', size / 2 + y).attr('href', img).attr('height', 40 + 'px').attr('width', 40 + 'px');
+      panel.append('text').attr('x', 150).attr('y', size / 2 + 20 + y).attr('dy', '.33em').text(city).style('font-size', size + 'px').style('fill', '#ffffff');
+      panel.append('text').attr('x', 220).attr('y', size / 2 + 20 + y).attr('dy', '.33em').text(weather).style('font-size', size + 'px').style('fill', '#f66');
+      return panel.append('text').attr('x', 340).attr('y', size / 2 + 20 + y).attr('dy', '.33em').text(date).style('font-size', size + 'px').style('fill', '#ffde00');
     };
 
     return AreasBar;
@@ -202,9 +213,9 @@
       this.h = this.height - 40;
       this.w = this.width - 60;
       this.gap = (this.w - 30) / 5;
-      this.c1 = 'rgb(205, 255, 65)';
-      this.c2 = 'rgb(60, 180, 236)';
-      this.c3 = 'rgb(255, 87, 87)';
+      this.c1 = 'rgb(137, 189, 27)';
+      this.c2 = 'rgb(6, 129, 200)';
+      this.c3 = 'rgb(217, 6, 8)';
       this.xscale = d3.scaleLinear().domain([0, 11]).range([0, this.w]);
       this.yscale = d3.scaleLinear().domain([0, 70]).range([this.h, 0]);
       this.make_defs();
@@ -212,24 +223,24 @@
       return this.draw_lines();
     };
 
+    LineChart.prototype.make_def = function(r, g, b, id) {
+      var lg;
+      lg = this.svg_defs.append('linearGradient').attr('id', id).attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
+      lg.append('stop').attr('offset', '0%').attr('stop-color', "rgba(" + r + ", " + g + ", " + b + ", 0.1)");
+      return lg.append('stop').attr('offset', '100%').attr('stop-color', "rgba(" + r + ", " + g + ", " + b + ", 0.0)");
+    };
+
     LineChart.prototype.make_defs = function() {
-      var defs, lg;
-      defs = this.svg.append('defs');
-      lg = defs.append('linearGradient').attr('id', 'line-chart-linear1').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
-      lg.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(205, 255, 65, 0.5)');
-      lg.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(205, 255, 65, 0.05)');
-      lg = defs.append('linearGradient').attr('id', 'line-chart-linear2').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
-      lg.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(60, 180, 236, 0.5)');
-      lg.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(60, 180, 236, 0.05)');
-      lg = defs.append('linearGradient').attr('id', 'line-chart-linear3').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
-      lg.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(255, 87, 87, 0.5)');
-      return lg.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(255, 87, 87, 0.05)');
+      this.svg_defs = this.svg.append('defs');
+      this.make_def(205, 255, 65, 'line-chart-linear1');
+      this.make_def(60, 180, 236, 'line-chart-linear2');
+      return this.make_def(217, 87, 87, 'line-chart-linear3');
     };
 
     LineChart.prototype.draw_lines = function() {
       var arealine1, arealine2, arealine3, d, i, idx, j, k, len, len1, len2, line1, ref, ref1, ref2, results;
       if (this.panel == null) {
-        this.panel = this.svg.append('g').attr('transform', "translate(40, 10)");
+        this.panel = this.svg.append('g').attr('transform', "translate(30, 10)");
       }
       line1 = d3.line().x((function(_this) {
         return function(d, idx) {
@@ -239,7 +250,7 @@
         return function(d) {
           return _this.yscale(d);
         };
-      })(this));
+      })(this)).curve(d3.curveCatmullRom.alpha(0.5));
       arealine1 = d3.line().x((function(_this) {
         return function(d, idx) {
           if (idx === 0) {
@@ -314,8 +325,8 @@
 
     LineChart.prototype.draw_axis = function() {
       var axisx, axisy;
-      axisx = this.svg.append('g').attr('class', 'axis axis-x').attr('transform', "translate(" + 40 + ", " + (10 + this.h) + ")");
-      axisy = this.svg.append('g').attr('class', 'axis axis-y').attr('transform', "translate(" + 40 + ", " + 10 + ")");
+      axisx = this.svg.append('g').attr('class', 'axis axis-x').attr('transform', "translate(" + 30 + ", " + (10 + this.h) + ")");
+      axisy = this.svg.append('g').attr('class', 'axis axis-y').attr('transform', "translate(" + 30 + ", " + 10 + ")");
       axisx.call(d3.axisBottom(this.xscale).tickValues([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]).tickFormat(function(d, idx) {
         return (idx + 1) + "月";
       }));
@@ -343,6 +354,9 @@
     }
 
     LineChartTitle.prototype.draw = function() {
+      this.c1 = 'rgb(137, 189, 27)';
+      this.c2 = 'rgb(6, 129, 200)';
+      this.c3 = 'rgb(217, 6, 8)';
       this.svg = this.draw_svg();
       return this.draw_texts();
     };
@@ -351,13 +365,13 @@
       var size, texts;
       texts = this.svg.append('g').style('transform', 'translate(0px, 0px)');
       size = 20;
-      texts.append('text').attr('x', 10).attr('y', this.height / 2).attr('dy', '.33em').text('辣椒采购价格同比（单位：万元/吨）').style('font-size', size).style('fill', '#ffffff');
-      texts.append('rect').attr('x', 250 - 180).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', 'rgb(205, 255, 65)');
-      texts.append('text').attr('x', 290 - 180).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('现价').style('font-size', size).style('fill', '#ffffff');
-      texts.append('rect').attr('x', 390 - 180).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', 'rgb(60, 180, 236)');
-      texts.append('text').attr('x', 430 - 180).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('上一年同期价').style('font-size', size).style('fill', '#ffffff');
-      texts.append('rect').attr('x', 390).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', 'rgb(255, 87, 87)');
-      return texts.append('text').attr('x', 430).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('政府指导价').style('font-size', size).style('fill', '#ffffff');
+      texts.append('text').attr('x', 10).attr('y', this.height / 2).attr('dy', '.33em').text('辣椒采购价格同比（单位：万元/吨）').style('font-size', size + 'px').style('fill', '#ffffff');
+      texts.append('rect').attr('x', 250 - 180).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', this.c1);
+      texts.append('text').attr('x', 290 - 180).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('现价').style('font-size', size + 'px').style('fill', '#ffffff');
+      texts.append('rect').attr('x', 390 - 180).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', this.c2);
+      texts.append('text').attr('x', 430 - 180).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('上一年同期价').style('font-size', size + 'px').style('fill', '#ffffff');
+      texts.append('rect').attr('x', 390).attr('y', this.height / 2 - 7 + 30).attr('width', 30).attr('height', 15).style('fill', this.c3);
+      return texts.append('text').attr('x', 430).attr('y', this.height / 2 + 30).attr('dy', '.33em').text('政府指导价').style('font-size', size + 'px').style('fill', '#ffffff');
     };
 
     return LineChartTitle;
@@ -392,27 +406,31 @@
       this.svg.select('g.flag').remove();
       flag = this.svg.append('g').attr('class', 'flag');
       flag.append('circle').attr('r', this.height / 4).attr('cx', 80).attr('cy', this.height / 2).attr('fill', 'rgb(255, 87, 87)');
-      return flag.append('image').attr('href', "img/icon-lajiao1.png").attr('height', this.height / 5 * 2).attr('x', 80 - this.height / 5).attr('y', this.height / 2 - this.height / 5);
+      return flag.append('image').attr('href', "img/icon-lajiao1.png").attr('height', this.height / 6 * 2).attr('width', this.height / 6 * 2).attr('x', 80 - this.height / 6).attr('y', this.height / 2 - this.height / 6);
     };
 
     OneArea.prototype.draw_texts = function() {
-      var size, texts;
+      var texts;
       this.svg.select('g.texts').remove();
       texts = this.svg.append('g').attr('class', 'texts').style('transform', 'translate(160px, 48px)');
+      this.draw_text(texts, '即时采购价', 4.122, 0, true);
+      this.draw_text(texts, '去年同期价', 4.782, 40);
+      return this.draw_text(texts, '当前指导价', 4.339, 80);
+    };
+
+    OneArea.prototype.draw_text = function(texts, label, number, y, flag) {
+      var size;
+      if (flag == null) {
+        flag = false;
+      }
       size = 20;
-      texts.append('text').attr('x', 0).attr('y', size / 2 + 10).attr('dy', '.33em').text("即时采购价格").style('font-size', size).style('fill', '#ffffff');
-      texts.append('text').attr('x', 130).attr('y', size / 2 + 10).attr('dy', '.33em').text(4900045.23).style('font-size', size).style('fill', '#ffff05');
-      texts.append('text').attr('x', 245).attr('y', size / 2 + 10).attr('dy', '.33em').text("元").style('font-size', size).style('fill', '#ffffff');
-      size = 20;
-      texts.append('text').attr('x', 0).attr('y', size / 2 + 10 + 40).attr('dy', '.33em').text("去年同期价格").style('font-size', size).style('fill', '#ffffff');
-      texts.append('text').attr('x', 130).attr('y', size / 2 + 10 + 40).attr('dy', '.33em').text(501782.52).style('font-size', size).style('fill', '#ffff05');
-      texts.append('text').attr('x', 245).attr('y', size / 2 + 10 + 40).attr('dy', '.33em').text("元").style('font-size', size).style('fill', '#ffffff');
-      size = 20;
-      texts.append('text').attr('x', 0).attr('y', size / 2 + 10 + 80).attr('dy', '.33em').text("当前指导价格").style('font-size', size).style('fill', '#ffffff');
-      texts.append('text').attr('x', 130).attr('y', size / 2 + 10 + 80).attr('dy', '.33em').text(620521.78).style('font-size', size).style('fill', '#ffff05');
-      texts.append('text').attr('x', 245).attr('y', size / 2 + 10 + 80).attr('dy', '.33em').text("元").style('font-size', size).style('fill', '#ffffff');
-      texts.append('text').attr('x', 275).attr('y', size / 2 + 10).attr('dy', '.33em').text("2.34%").style('font-size', size).style('fill', '#ffffff');
-      return texts.append('image').attr('x', 335).attr('y', size / 2 + 10 - size / 2).attr('href', 'img/downicon1.png').attr('height', size);
+      texts.append('text').attr('x', 0).attr('y', size / 2 + 10 + y).attr('dy', '.33em').text(label).style('font-size', size + 'px').style('fill', '#ffffff');
+      texts.append('text').attr('x', 110).attr('y', size / 2 + 10 + y).attr('dy', '.33em').text(number).style('font-size', size + 'px').style('fill', '#ffde00');
+      texts.append('text').attr('x', 170).attr('y', size / 2 + 10 + y).attr('dy', '.33em').text("万元 / 吨").style('font-size', size + 'px').style('fill', '#ffffff');
+      if (flag) {
+        texts.append('text').attr('x', 270).attr('y', size / 2 + 10 + y).attr('dy', '.33em').text("2.34‰").style('font-size', size + 'px').style('fill', '#ffffff');
+        return texts.append('image').attr('x', 330).attr('y', size / 2 + 10 - size / 2 + y).attr('href', 'img/downicon1.png').attr('height', size).attr('width', size);
+      }
     };
 
     return OneArea;
@@ -436,22 +454,20 @@
     }
 
     PageTitle.prototype.draw = function() {
+      this.TEXT_SIZE = 50;
       this.svg = this.draw_svg();
       this.draw_title();
       return this.draw_points();
     };
 
     PageTitle.prototype.draw_title = function() {
-      var size, title;
-      title = this.svg.append('g');
-      size = 60;
-      return title.append('text').attr('x', 70 + 30).attr('y', 10 + size / 2).attr('dy', '.33em').text('原材料产地监控').style('font-size', size).style('fill', '#aebbcb');
+      var title;
+      return title = this.svg.append('g').append('text').attr('x', 70 + 30).attr('y', 10 + this.TEXT_SIZE / 2).attr('dy', '.33em').text('原材料产地监控').style('font-size', this.TEXT_SIZE + 'px').style('fill', '#aebbcb');
     };
 
     PageTitle.prototype.draw_points = function() {
       var points;
-      points = this.svg.append('g');
-      return points.append('image').attr('href', 'img/title-points.png').attr('width', 60).attr('height', 60).attr('x', 10).attr('y', 10).style('opacity', '0.5');
+      return points = this.svg.append('g').append('image').attr('href', 'img/title-points.png').attr('width', this.TEXT_SIZE).attr('height', this.TEXT_SIZE).attr('x', 10).attr('y', 10).style('opacity', '0.5');
     };
 
     return PageTitle;
@@ -463,7 +479,7 @@
 }).call(this);
 
 (function() {
-  var PathMap, data,
+  var CityAnimate, PathMap, data,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -549,6 +565,8 @@
     }
 
     PathMap.prototype.draw = function() {
+      this.MAP_STROKE_COLOR = '#021225';
+      this.MAP_FILL_COLOR = '#323c48';
       this.svg = this.draw_svg();
       return this.load_data();
     };
@@ -563,7 +581,7 @@
     };
 
     PathMap.prototype.draw_map = function() {
-      this.projection = d3.geoMercator().center([105, 38]).scale(this.width * 0.85).translate([this.width / 2, this.height / 2]);
+      this.projection = d3.geoMercator().center([105, 28]).scale(this.width * 2.0).translate([this.width / 2, this.height / 2]);
       this.path = d3.geoPath(this.projection);
       this.g_map = this.svg.append('g');
       this._draw_map();
@@ -576,29 +594,21 @@
       panel = this.svg.append('g').style('transform', "translate(50px, " + (this.height - 150) + "px)");
       size = 24;
       panel.append('circle').attr('cx', 8).attr('cy', 8).attr('r', 16).attr('fill', '#f33');
-      panel.append('text').attr('x', 36).attr('y', size / 2 - 4).attr('dy', '.33em').text("辣椒原产地").style('font-size', size).style('fill', '#ffffff');
+      panel.append('text').attr('x', 36).attr('y', size / 2 - 4).attr('dy', '.33em').text("辣椒原产地").style('font-size', size + 'px').style('fill', '#ffffff');
       panel = this.svg.append('g').style('transform', "translate(50px, " + (this.height - 150 + 50) + "px)");
       size = 24;
       panel.append('circle').attr('cx', 8).attr('cy', 8).attr('r', 16).attr('fill', '#ff3');
-      panel.append('text').attr('x', 36).attr('y', size / 2 - 4).attr('dy', '.33em').text("生姜原产地").style('font-size', size).style('fill', '#ffffff');
+      panel.append('text').attr('x', 36).attr('y', size / 2 - 4).attr('dy', '.33em').text("生姜原产地").style('font-size', size + 'px').style('fill', '#ffffff');
       panel = this.svg.append('g').style('transform', "translate(50px, " + (this.height - 150 + 100) + "px)");
       size = 24;
       panel.append('circle').attr('cx', 8).attr('cy', 8).attr('r', 16).attr('fill', '#3f3');
-      return panel.append('text').attr('x', 36).attr('y', size / 2 - 4).attr('dy', '.33em').text("大豆原产地").style('font-size', size).style('fill', '#ffffff');
+      return panel.append('text').attr('x', 36).attr('y', size / 2 - 4).attr('dy', '.33em').text("大豆原产地").style('font-size', size + 'px').style('fill', '#ffffff');
     };
 
     PathMap.prototype._draw_map = function() {
       var countries;
       this.g_map.selectAll('.country').remove();
-      return countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', (function(_this) {
-        return function(d) {
-          return 'rgba(120, 180, 208, 1)';
-        };
-      })(this)).style('stroke-width', 2).style('fill', (function(_this) {
-        return function(d) {
-          return 'rgba(136, 204, 236, 0.1)';
-        };
-      })(this));
+      return countries = this.g_map.selectAll('.country').data(this.features).enter().append('path').attr('class', 'country').attr('d', this.path).style('stroke', this.MAP_STROKE_COLOR).style('stroke-width', 2).style('fill', this.MAP_FILL_COLOR);
     };
 
     PathMap.prototype._draw_circle = function() {
@@ -607,7 +617,7 @@
       for (i = 0, len = data.length; i < len; i++) {
         d = data[i];
         ref = this.projection([d.lat, d.long]), x = ref[0], y = ref[1];
-        points.append('circle').attr('class', 'chandi').attr('cx', x).attr('cy', y).style('r', d.d).attr('fill', (function(_this) {
+        this.g_map.append('circle').attr('class', 'chandi').attr('cx', x).attr('cy', y).attr('r', d.d).attr('fill', (function(_this) {
           return function() {
             if (d.type === 1) {
               return 'rgba(255, 51, 51, 0.7)';
@@ -622,18 +632,69 @@
         })(this));
       }
       ref1 = this.projection([113.7, 34.6]), x = ref1[0], y = ref1[1];
-      points.append('circle').attr('class', 'warning').attr('cx', x).attr('cy', y).attr('fill', 'rgba(255, 51, 51, 0.7)');
-      points.append('circle').attr('class', 'warning a').attr('cx', x).attr('cy', y).attr('fill', 'rgba(255, 51, 51, 0.7)');
-      points.append('image').attr('class', 'map-point').attr('href', 'img/大风.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
+      new CityAnimate(this, x, y, '#ff9999', 8, 'img/大雨.png').run();
       ref2 = this.projection([106.9, 27.7]), x = ref2[0], y = ref2[1];
-      points.append('circle').attr('class', 'warning').attr('cx', x).attr('cy', y).attr('fill', 'rgba(255, 51, 51, 0.7)');
-      points.append('circle').attr('class', 'warning a').attr('cx', x).attr('cy', y).attr('fill', 'rgba(255, 51, 51, 0.7)');
-      return points.append('image').attr('class', 'map-point').attr('href', 'img/大雨.png').attr('x', x).attr('y', y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
+      return new CityAnimate(this, x, y, '#ff9999', 8, 'img/大风.png').run();
     };
 
     return PathMap;
 
   })(Graph);
+
+  CityAnimate = (function() {
+    function CityAnimate(map, x1, y1, color, width, img) {
+      this.map = map;
+      this.x = x1;
+      this.y = y1;
+      this.color = color;
+      this.width = width;
+      this.img = img;
+      this.g_map = this.map.g_map;
+    }
+
+    CityAnimate.prototype.run = function() {
+      this.g_map.append('image').attr('class', 'map-point').attr('href', this.img).attr('x', this.x).attr('y', this.y).style('transform', 'translate(-30px, -50px)').attr('width', 60).attr('height', 60);
+      return this.wave();
+    };
+
+    CityAnimate.prototype.wave = function() {
+      this.circle_wave(0);
+      return this.timer = setInterval((function(_this) {
+        return function() {
+          return _this.circle_wave(0);
+        };
+      })(this), 500);
+    };
+
+    CityAnimate.prototype.circle_wave = function(delay) {
+      var circle;
+      circle = this.g_map.insert('circle', '.map-point').attr('cx', this.x).attr('cy', this.y).attr('stroke', this.color).attr('stroke-width', this.width).attr('fill', 'transparent');
+      return jQuery({
+        r: 10,
+        o: 1
+      }).delay(delay).animate({
+        r: 100,
+        o: 0
+      }, {
+        step: function(now, fx) {
+          if (fx.prop === 'r') {
+            circle.attr('r', now);
+          }
+          if (fx.prop === 'o') {
+            return circle.style('opacity', now);
+          }
+        },
+        duration: 2000,
+        easing: 'easeOutQuad',
+        done: function() {
+          return circle.remove();
+        }
+      });
+    };
+
+    return CityAnimate;
+
+  })();
 
   BaseTile.register('path-map', PathMap);
 

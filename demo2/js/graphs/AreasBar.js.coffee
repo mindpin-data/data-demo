@@ -1,81 +1,67 @@
 class AreasBar extends Graph
   draw: ->
     @svg = @draw_svg()
-    @draw_flags()
+    @draw_stitle()
+    @draw_infos()
 
-  draw_flags: ->
-    @svg.select('g.flag').remove()
+  draw_stitle: ->
+    size = 24
+
+    @svg
+      .append 'text'
+      .attr 'x', 50
+      .attr 'y', size / 2 + 30
+      .attr 'dy', '.33em'
+      .text "原料产地自然灾害预警"
+      .style 'font-size', size + 'px'
+      .style 'fill', '#ffffff'
+
+  draw_infos: ->
     panel = @svg.append('g')
-      .attr 'class', 'flag'
+      .style 'transform', 'translate(-30px, 70px)'
+
+
+    @draw_info panel, 'img/大雨.png', '遵义', '近期大雨', '2017-03-02'
+    @draw_info panel, 'img/大风.png', '郑州', '近期大风', '2017-03-02', 60
+
+  draw_info: (panel, img, city, weather, date, y = 0)->
 
     size = 24
 
     panel
       .append 'image'
       .attr 'x', 80
-      .attr 'y', size / 2
-      .attr 'href', 'img/大雨.png'
-      .attr 'height', 40
-
-    panel
-      .append 'image'
-      .attr 'x', 80
-      .attr 'y', size / 2 + 60
-      .attr 'href', 'img/大风.png'
-      .attr 'height', 40
+      .attr 'y', size / 2 + y
+      .attr 'href', img
+      .attr 'height', 40 + 'px'
+      .attr 'width', 40 + 'px'
 
     panel
       .append 'text'
       .attr 'x', 150
-      .attr 'y', size / 2 + 20
+      .attr 'y', size / 2 + 20 + y
       .attr 'dy', '.33em'
-      .text "遵义"
-      .style 'font-size', size
+      .text city
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     panel
       .append 'text'
       .attr 'x', 220
-      .attr 'y', size / 2 + 20
+      .attr 'y', size / 2 + 20 + y
       .attr 'dy', '.33em'
-      .text "近期大雨"
-      .style 'font-size', size
+      .text weather
+      .style 'font-size', size + 'px'
       .style 'fill', '#f66'
 
     panel
       .append 'text'
-      .attr 'x', 380
-      .attr 'y', size / 2 + 20
+      .attr 'x', 340
+      .attr 'y', size / 2 + 20 + y
       .attr 'dy', '.33em'
-      .text "2017-03-02"
-      .style 'font-size', size
-      .style 'fill', '#ff6'
+      .text date
+      .style 'font-size', size + 'px'
+      .style 'fill', '#ffde00'
 
-    panel
-      .append 'text'
-      .attr 'x', 150
-      .attr 'y', size / 2 + 80
-      .attr 'dy', '.33em'
-      .text "郑州"
-      .style 'font-size', size
-      .style 'fill', '#ffffff'
-
-    panel
-      .append 'text'
-      .attr 'x', 220
-      .attr 'y', size / 2 + 80
-      .attr 'dy', '.33em'
-      .text "近期大风"
-      .style 'font-size', size
-      .style 'fill', '#f66'
-
-    panel
-      .append 'text'
-      .attr 'x', 380
-      .attr 'y', size / 2 + 70
-      .attr 'dy', '.33em'
-      .text "2017-03-02"
-      .style 'font-size', size
-      .style 'fill', '#ff6'
 
 BaseTile.register 'areas-bar', AreasBar

@@ -1,7 +1,10 @@
 class LineChartTitle extends Graph
   draw: ->
-    @svg = @draw_svg()
+    @c1 = 'rgb(137, 189, 27)'
+    @c2 = 'rgb(6, 129, 200)'
+    @c3 = 'rgb(217, 6, 8)'
 
+    @svg = @draw_svg()
     @draw_texts()
 
   draw_texts: ->
@@ -15,7 +18,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text '辣椒采购价格同比（单位：万元/吨）'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     texts
@@ -24,7 +27,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 - 7 + 30
       .attr 'width', 30
       .attr 'height', 15
-      .style 'fill', 'rgb(205, 255, 65)'
+      .style 'fill', @c1
 
     texts
       .append 'text'
@@ -32,7 +35,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '现价'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     texts
@@ -41,7 +44,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 - 7 + 30
       .attr 'width', 30
       .attr 'height', 15
-      .style 'fill', 'rgb(60, 180, 236)'
+      .style 'fill', @c2
 
     texts
       .append 'text'
@@ -49,7 +52,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '上一年同期价'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     texts
@@ -58,7 +61,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 - 7 + 30
       .attr 'width', 30
       .attr 'height', 15
-      .style 'fill', 'rgb(255, 87, 87)'
+      .style 'fill', @c3
 
     texts
       .append 'text'
@@ -66,7 +69,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '政府指导价'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
 BaseTile.register 'line-chart-title', LineChartTitle

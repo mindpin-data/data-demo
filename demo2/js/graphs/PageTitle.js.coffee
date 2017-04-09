@@ -1,33 +1,29 @@
 class PageTitle extends Graph
   draw: ->
-    @svg = @draw_svg()
+    @TEXT_SIZE = 50
 
+    @svg = @draw_svg()
     @draw_title()
     @draw_points()
 
   draw_title: ->
     title = @svg.append('g')
-    size = 60
-    title
       .append 'text'
       .attr 'x', 70 + 30
-      .attr 'y', 10 + size / 2
+      .attr 'y', 10 + @TEXT_SIZE / 2
       .attr 'dy', '.33em'
       .text '原材料产地监控'
-      .style 'font-size', size
+      .style 'font-size', @TEXT_SIZE + 'px'
       .style 'fill', '#aebbcb'
 
   draw_points: ->
     points = @svg.append('g')
-
-    points
       .append 'image'
       .attr 'href', 'img/title-points.png'
-      .attr 'width', 60
-      .attr 'height', 60
+      .attr 'width', @TEXT_SIZE
+      .attr 'height', @TEXT_SIZE
       .attr 'x', 10
       .attr 'y', 10
-      # .attr 'transform', 'translate(0, -30)'
       .style 'opacity', '0.5'
 
 

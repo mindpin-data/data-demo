@@ -2,6 +2,7 @@ $text-color: mix(#1A2842, #fff, 40%);
 $title-color: mix(#1A2842, #fff, 20%);
 
 $BG-COLOR: #021225;
+$NUMBER-COLOR: #ffde00;
 
 body {
   background-color: $BG-COLOR;
@@ -27,6 +28,10 @@ body {
 
 .tile.nbg {
   background-color: transparent;
+
+  &.withbd {
+    border:solid 1px rgba(white, 0.3);
+  }
 }
 
 $text-color: rgba(white, 0.5);
@@ -88,13 +93,13 @@ circle.warning.a {
     transform: translate(-30px, -75px);
   }
   to {
-    transform: translate(-30px, -50px);
+    transform: translate(-30px, -45px);
   }
 }
 
 image.map-point {
   animation-name: mpp;
-  animation-duration: 1s;
+  animation-duration: 1.5s;
   // animation-timing-function: linear;
   animation-iteration-count: infinite;
 }

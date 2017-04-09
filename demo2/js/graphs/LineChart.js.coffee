@@ -9,9 +9,9 @@ class LineChart extends Graph
     @w = @width - 60
     @gap = (@w - 30) / 5
 
-    @c1 = 'rgb(205, 255, 65)'
-    @c2 = 'rgb(60, 180, 236)'
-    @c3 = 'rgb(255, 87, 87)'
+    @c1 = 'rgb(137, 189, 27)'
+    @c2 = 'rgb(6, 129, 200)'
+    @c3 = 'rgb(217, 6, 8)'
 
     @xscale = d3.scaleLinear()
       .domain [0, 11]
@@ -26,67 +26,41 @@ class LineChart extends Graph
     @draw_axis()
     @draw_lines()
 
+  make_def: (r, g, b, id)->
+    lg = @svg_defs.append('linearGradient')
+      .attr 'id', id
+      .attr 'x1', '0%'
+      .attr 'y1', '0%'
+      .attr 'x2', '0%'
+      .attr 'y2', '100%'
+
+    lg.append('stop')
+      .attr 'offset', '0%'
+      .attr 'stop-color', "rgba(#{r}, #{g}, #{b}, 0.1)"
+
+    lg.append('stop')
+      .attr 'offset', '100%'
+      .attr 'stop-color', "rgba(#{r}, #{g}, #{b}, 0.0)"
+
+
   make_defs: ->
     # https://www.w3cplus.com/svg/svg-linear-gradients.html
+    @svg_defs = @svg.append('defs')
 
-    defs = @svg.append('defs')
-    lg = defs.append('linearGradient')
-      .attr 'id', 'line-chart-linear1'
-      .attr 'x1', '0%'
-      .attr 'y1', '0%'
-      .attr 'x2', '0%'
-      .attr 'y2', '100%'
-
-    lg.append('stop')
-      .attr 'offset', '0%'
-      .attr 'stop-color', 'rgba(205, 255, 65, 0.5)'
-
-    lg.append('stop')
-      .attr 'offset', '100%'
-      .attr 'stop-color', 'rgba(205, 255, 65, 0.05)'
-
-
-    lg = defs.append('linearGradient')
-      .attr 'id', 'line-chart-linear2'
-      .attr 'x1', '0%'
-      .attr 'y1', '0%'
-      .attr 'x2', '0%'
-      .attr 'y2', '100%'
-
-    lg.append('stop')
-      .attr 'offset', '0%'
-      .attr 'stop-color', 'rgba(60, 180, 236, 0.5)'
-
-    lg.append('stop')
-      .attr 'offset', '100%'
-      .attr 'stop-color', 'rgba(60, 180, 236, 0.05)'
-
-
-    lg = defs.append('linearGradient')
-      .attr 'id', 'line-chart-linear3'
-      .attr 'x1', '0%'
-      .attr 'y1', '0%'
-      .attr 'x2', '0%'
-      .attr 'y2', '100%'
-
-    lg.append('stop')
-      .attr 'offset', '0%'
-      .attr 'stop-color', 'rgba(255, 87, 87, 0.5)'
-
-    lg.append('stop')
-      .attr 'offset', '100%'
-      .attr 'stop-color', 'rgba(255, 87, 87, 0.05)'
-
+    @make_def 205, 255, 65, 'line-chart-linear1'
+    @make_def 60, 180, 236, 'line-chart-linear2'
+    @make_def 217, 87, 87,  'line-chart-linear3'
 
 
   draw_lines: ->
     if not @panel?
       @panel = @svg.append('g')
-        .attr 'transform', "translate(40, 10)"
+        .attr 'transform', "translate(30, 10)"
 
     line1 = d3.line()
       .x (d, idx)=> @xscale idx
       .y (d)=> @yscale d
+      .curve(d3.curveCatmullRom.alpha(0.5))
 
     arealine1 = d3.line()
       .x (d, idx)=>
@@ -193,11 +167,11 @@ class LineChart extends Graph
   draw_axis: ->
     axisx = @svg.append('g')
       .attr 'class', 'axis axis-x'
-      .attr 'transform', "translate(#{40}, #{10 + @h})"
+      .attr 'transform', "translate(#{30}, #{10 + @h})"
 
     axisy = @svg.append('g')
       .attr 'class', 'axis axis-y'
-      .attr 'transform', "translate(#{40}, #{10})"
+      .attr 'transform', "translate(#{30}, #{10})"
 
     axisx.call(
       d3.axisBottom(@xscale)

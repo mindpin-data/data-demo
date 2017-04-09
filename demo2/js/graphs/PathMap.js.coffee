@@ -22,8 +22,11 @@ data = [
 
 class PathMap extends Graph
   draw: ->
-    @svg = @draw_svg()
+    @MAP_STROKE_COLOR = '#021225'
+    @MAP_FILL_COLOR = '#323c48'
+    # @MAP_FILL_COLOR = '#0f2438'
 
+    @svg = @draw_svg()
     @load_data()
 
   load_data: ->
@@ -36,8 +39,8 @@ class PathMap extends Graph
     # http://s.4ye.me/ziMnfK
 
     @projection = d3.geoMercator()
-      .center [105, 38]
-      .scale @width * 0.85
+      .center [105, 28]
+      .scale @width * 2.0
       .translate [@width / 2, @height / 2]
 
     @path = d3.geoPath @projection
@@ -66,7 +69,7 @@ class PathMap extends Graph
       .attr 'y', size / 2 - 4
       .attr 'dy', '.33em'
       .text "辣椒原产地"
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
 
@@ -87,7 +90,7 @@ class PathMap extends Graph
       .attr 'y', size / 2 - 4
       .attr 'dy', '.33em'
       .text "生姜原产地"
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
 
@@ -108,7 +111,7 @@ class PathMap extends Graph
       .attr 'y', size / 2 - 4
       .attr 'dy', '.33em'
       .text "大豆原产地"
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
 
@@ -121,16 +124,9 @@ class PathMap extends Graph
       .append 'path'
       .attr 'class', 'country'
       .attr 'd', @path
-      # .style 'stroke', 'rgba(136, 204, 236, 1)'
-      .style 'stroke', (d)=>
-        return 'rgba(120, 180, 208, 1)'
-
+      .style 'stroke', @MAP_STROKE_COLOR
       .style 'stroke-width', 2
-      .style 'fill', (d)=>
-        # return 'rgba(136, 204, 236, 0.7)' if d.id == @main_area
-        # return 'rgba(255, 216, 40, 1)' if d.id == @current_area
-        # return 'rgba(136, 204, 236, 0.5)' if @areas.indexOf(d.id) > -1
-        return 'rgba(136, 204, 236, 0.1)'
+      .style 'fill', @MAP_FILL_COLOR
 
   _draw_circle: ->
     points = @svg.append 'g'
@@ -138,58 +134,71 @@ class PathMap extends Graph
     for d in data
       [x, y] = @projection [d.lat, d.long]
 
-      points.append 'circle'
+      @g_map.append 'circle'
         .attr 'class', 'chandi'
         .attr 'cx', x
         .attr 'cy', y
-        .style 'r', d.d
+        .attr 'r', d.d
         .attr 'fill', =>
           return 'rgba(255, 51, 51, 0.7)' if d.type == 1
           return 'rgba(255, 255, 51, 0.7)' if d.type == 2
           return 'rgba(51, 255, 51, 0.7)' if d.type == 3
 
     [x, y] = @projection [113.7, 34.6]
-    points.append 'circle'
-      .attr 'class', 'warning'
-      .attr 'cx', x
-      .attr 'cy', y
-      .attr 'fill', 'rgba(255, 51, 51, 0.7)'
-
-    points.append 'circle'
-      .attr 'class', 'warning a'
-      .attr 'cx', x
-      .attr 'cy', y
-      .attr 'fill', 'rgba(255, 51, 51, 0.7)'
-
-    points.append 'image'
-      .attr 'class', 'map-point'
-      .attr 'href', 'img/大风.png'
-      .attr 'x', x
-      .attr 'y', y
-      .style 'transform', 'translate(-30px, -50px)'
-      .attr 'width', 60
-      .attr 'height', 60
+    new CityAnimate(@, x, y, '#ff9999', 8, 'img/大雨.png').run()
 
     [x, y] = @projection [106.9, 27.7]
-    points.append 'circle'
-      .attr 'class', 'warning'
-      .attr 'cx', x
-      .attr 'cy', y
-      .attr 'fill', 'rgba(255, 51, 51, 0.7)'
+    new CityAnimate(@, x, y, '#ff9999', 8, 'img/大风.png').run()
 
-    points.append 'circle'
-      .attr 'class', 'warning a'
-      .attr 'cx', x
-      .attr 'cy', y
-      .attr 'fill', 'rgba(255, 51, 51, 0.7)'
 
-    points.append 'image'
+class CityAnimate
+  constructor: (@map, @x, @y, @color, @width, @img)->
+    @g_map = @map.g_map
+
+  run: ->
+    @g_map.append 'image'
       .attr 'class', 'map-point'
-      .attr 'href', 'img/大雨.png'
-      .attr 'x', x
-      .attr 'y', y
+      .attr 'href', @img
+      .attr 'x', @x
+      .attr 'y', @y
       .style 'transform', 'translate(-30px, -50px)'
       .attr 'width', 60
       .attr 'height', 60
+
+    @wave()
+
+
+  # 在指定的位置用指定的颜色显示三个依次扩散的光圈
+  wave: ->
+    @circle_wave(0)
+    @timer = setInterval =>
+      @circle_wave(0)
+    , 500
+
+  # 在指定的位置用指定的颜色显示扩散光圈
+  circle_wave: (delay)->
+    circle = @g_map.insert 'circle', '.map-point'
+      .attr 'cx', @x
+      .attr 'cy', @y
+      .attr 'stroke', @color
+      .attr 'stroke-width', @width
+      .attr 'fill', 'transparent'
+
+    jQuery({ r: 10, o: 1 }).delay(delay).animate({ r: 100, o: 0 }
+      {
+        step: (now, fx)->
+          if fx.prop == 'r'
+            circle.attr 'r', now
+          if fx.prop == 'o'
+            circle.style 'opacity', now
+
+        duration: 2000
+        easing: 'easeOutQuad'
+        done: ->
+          circle.remove()
+      }
+    )
+
+
 
 BaseTile.register 'path-map', PathMap

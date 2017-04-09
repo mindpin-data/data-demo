@@ -22,9 +22,10 @@ class OneArea extends Graph
     flag
       .append 'image'
       .attr 'href', "img/icon-lajiao1.png"
-      .attr 'height', @height / 5 * 2
-      .attr 'x', 80 - @height / 5
-      .attr 'y', @height / 2 - @height / 5
+      .attr 'height', @height / 6 * 2
+      .attr 'width', @height / 6 * 2
+      .attr 'x', 80 - @height / 6
+      .attr 'y', @height / 2 - @height / 6
 
   draw_texts: ->
     @svg.select('g.texts').remove()
@@ -33,107 +34,57 @@ class OneArea extends Graph
       .attr 'class', 'texts'
       .style 'transform', 'translate(160px, 48px)'
 
+    @draw_text texts, '即时采购价', 4.122, 0, true
+    @draw_text texts, '去年同期价', 4.782, 40
+    @draw_text texts, '当前指导价', 4.339, 80
+
+
+  draw_text: (texts, label, number, y, flag = false)->
     size = 20
     texts
       .append 'text'
       .attr 'x', 0
-      .attr 'y', size / 2 + 10
+      .attr 'y', size / 2 + 10 + y
       .attr 'dy', '.33em'
-      .text "即时采购价格"
-      .style 'font-size', size
+      .text label
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     texts
       .append 'text'
-      .attr 'x', 130
-      .attr 'y', size / 2 + 10
+      .attr 'x', 110
+      .attr 'y', size / 2 + 10 + y
       .attr 'dy', '.33em'
-      .text 4900045.23
-      .style 'font-size', size
-      .style 'fill', '#ffff05'
+      .text number
+      .style 'font-size', size + 'px'
+      .style 'fill', '#ffde00'
 
     texts
       .append 'text'
-      .attr 'x', 245
-      .attr 'y', size / 2 + 10
+      .attr 'x', 170
+      .attr 'y', size / 2 + 10 + y
       .attr 'dy', '.33em'
-      .text "元"
-      .style 'font-size', size
+      .text "万元 / 吨"
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
+    if flag
+      texts
+        .append 'text'
+        .attr 'x', 270
+        .attr 'y', size / 2 + 10 + y
+        .attr 'dy', '.33em'
+        .text "2.34‰"
+        .style 'font-size', size + 'px'
+        .style 'fill', '#ffffff'
 
-    size = 20
-    texts
-      .append 'text'
-      .attr 'x', 0
-      .attr 'y', size / 2 + 10 + 40
-      .attr 'dy', '.33em'
-      .text "去年同期价格"
-      .style 'font-size', size
-      .style 'fill', '#ffffff'
-
-    texts
-      .append 'text'
-      .attr 'x', 130
-      .attr 'y', size / 2 + 10 + 40
-      .attr 'dy', '.33em'
-      .text 501782.52
-      .style 'font-size', size
-      .style 'fill', '#ffff05'
-
-    texts
-      .append 'text'
-      .attr 'x', 245
-      .attr 'y', size / 2 + 10 + 40
-      .attr 'dy', '.33em'
-      .text "元"
-      .style 'font-size', size
-      .style 'fill', '#ffffff'      
-
-    size = 20
-    texts
-      .append 'text'
-      .attr 'x', 0
-      .attr 'y', size / 2 + 10 + 80
-      .attr 'dy', '.33em'
-      .text "当前指导价格"
-      .style 'font-size', size
-      .style 'fill', '#ffffff'
-
-    texts
-      .append 'text'
-      .attr 'x', 130
-      .attr 'y', size / 2 + 10 + 80
-      .attr 'dy', '.33em'
-      .text 620521.78
-      .style 'font-size', size
-      .style 'fill', '#ffff05'
-
-    texts
-      .append 'text'
-      .attr 'x', 245
-      .attr 'y', size / 2 + 10 + 80
-      .attr 'dy', '.33em'
-      .text "元"
-      .style 'font-size', size
-      .style 'fill', '#ffffff'   
-
-
-    texts
-      .append 'text'
-      .attr 'x', 275
-      .attr 'y', size / 2 + 10
-      .attr 'dy', '.33em'
-      .text "2.34%"
-      .style 'font-size', size
-      .style 'fill', '#ffffff'
-
-    texts
-      .append 'image'
-      .attr 'x', 335
-      .attr 'y', size / 2 + 10 - size / 2
-      .attr 'href', 'img/downicon1.png'
-      .attr 'height', size
+      texts
+        .append 'image'
+        .attr 'x', 330
+        .attr 'y', size / 2 + 10 - size / 2 + y
+        .attr 'href', 'img/downicon1.png'
+        .attr 'height', size
+        .attr 'width', size
 
 
 

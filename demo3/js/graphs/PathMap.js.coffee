@@ -55,8 +55,10 @@ rand_item_of = (arr)->
 
 class PathMap extends Graph
   draw: ->
-    @svg = @draw_svg()
+    @MAP_STROKE_COLOR = '#021225'
+    @MAP_FILL_COLOR = '#323c48'
 
+    @svg = @draw_svg()
     @load_data()
 
   load_data: ->
@@ -95,9 +97,9 @@ class PathMap extends Graph
       .append 'path'
       .attr 'class', 'country'
       .attr 'd', @path
-      .style 'stroke', '#021225'
-      .style 'stroke-width', 1
-      .style 'fill', '#323c48'
+      .style 'stroke', @MAP_STROKE_COLOR
+      .style 'stroke-width', 2
+      .style 'fill', @MAP_FILL_COLOR
 
   draw_circles: ->
     cn_cities.forEach (p)=>
