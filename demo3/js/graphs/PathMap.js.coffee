@@ -99,6 +99,10 @@ class PathMap extends Graph
 
       @draw_heatmap()
       # @draw_circles()
+      @svg1 = @draw_svg()
+        .style 'position', 'absolute'
+        .style 'left', '0'
+        .style 'top', '0'
 
       @random_city()
 
@@ -198,7 +202,7 @@ class PathMap extends Graph
 
 class CityAnimate
   constructor: (@map, @x, @y, @color, @width)->
-    @g_map = @map.g_map
+    @g_map = @map.svg1
 
   run: ->
     @flight_animate()

@@ -1,23 +1,23 @@
 data = [
-  { lat: 103, long: 30, d: 30, type: 1}
-  { lat: 110, long: 29, d: 20, type: 1}
-  { lat: 106.9, long: 27.7, d: 25, type: 1}
-  { lat: 104, long: 26, d: 20, type: 1}
-  { lat: 106, long: 23, d: 20, type: 1}
+  { lat: 103, long: 30, d: 30, type: 'lajiao'}
+  { lat: 110, long: 29, d: 20, type: 'lajiao'}
+  { lat: 106.9, long: 27.7, d: 25, type: 'lajiao'}
+  { lat: 104, long: 26, d: 20, type: 'lajiao'}
+  { lat: 106, long: 23, d: 20, type: 'lajiao'}
 
-  { lat: 114.3, long: 28.7, d: 20, type: 2}
-  { lat: 106.3, long: 29.6, d: 17, type: 2}
-  { lat: 103.7, long: 26.8, d: 23, type: 2}
-  { lat: 108.6, long: 25.5, d: 24, type: 2}
+  { lat: 114.3, long: 28.7, d: 20, type: 'shengjiang'}
+  { lat: 106.3, long: 29.6, d: 17, type: 'shengjiang'}
+  { lat: 103.7, long: 26.8, d: 23, type: 'shengjiang'}
+  { lat: 108.6, long: 25.5, d: 24, type: 'shengjiang'}
 
-  { lat: 113.7, long: 34.6, d: 30, type: 3}
-  { lat: 105.1, long: 28.7, d: 25, type: 3}
-  { lat: 103.7, long: 26.8, d: 24, type: 3}
-  { lat: 111.8, long: 24.4, d: 20, type: 3}
-  { lat: 100.2, long: 23.1, d: 19, type: 3}
+  { lat: 113.7, long: 34.6, d: 30, type: 'dadou'}
+  { lat: 105.1, long: 28.7, d: 25, type: 'dadou'}
+  { lat: 103.7, long: 26.8, d: 24, type: 'dadou'}
+  { lat: 111.8, long: 24.4, d: 20, type: 'dadou'}
+  { lat: 100.2, long: 23.1, d: 19, type: 'dadou'}
 ]
 
-
+products = ['lajiao', 'shengjiang', 'dadou']
 
 
 class PathMap extends Graph
@@ -33,11 +33,25 @@ class PathMap extends Graph
     d3.json 'data/china.json?1', (error, _data)=>
       @features = _data.features
 
+      @init()
+
+      @idx = 0
+      @current_product = products[0]
       @draw_map()
 
-  draw_map: ->
-    # http://s.4ye.me/ziMnfK
+      jQuery(document).on 'data-map:next-draw', =>
+        @draw_next()
 
+  draw_next: ->
+    @idx += 1
+    @idx = 0 if @idx == 3
+    @current_product = products[@idx]
+
+    @_draw_texts()
+    @_draw_circle()
+
+  init: ->
+    # http://s.4ye.me/ziMnfK
     @projection = d3.geoMercator()
       .center [105, 28]
       .scale @width * 2.0
@@ -45,125 +59,102 @@ class PathMap extends Graph
 
     @path = d3.geoPath @projection
 
-    @g_map = @svg.append 'g'
+    @layer_map = @svg.append 'g'
+    @layer_circles = @svg.append 'g'
+    @layer_icon = @svg.append 'g'
 
+  draw_map: ->
     @_draw_map()
     @_draw_texts()
     @_draw_circle()
+    @_draw_warning()
 
   _draw_texts: ->
-    panel = @svg.append 'g'
-      .style 'transform', "translate(50px, #{@height - 150}px)"
+    @texts.remove() if @texts?
+    @texts = @layer_map.append 'g'
 
-    size = 24
-    panel
-      .append 'circle'
-      .attr 'cx', 8
-      .attr 'cy', 8
-      .attr 'r', 16
-      .attr 'fill', '#f33'
+    _text = (color, text, y, opacity)=>
+      panel = @texts.append 'g'
+        .style 'transform', "translate(50px, #{@height - 150 + y}px)"
+        .style 'opacity', opacity
 
-    panel
-      .append 'text'
-      .attr 'x', 36
-      .attr 'y', size / 2 - 4
-      .attr 'dy', '.33em'
-      .text "辣椒原产地"
-      .style 'font-size', size + 'px'
-      .style 'fill', '#ffffff'
+      size = 24
+      panel
+        .append 'circle'
+        .attr 'cx', 8
+        .attr 'cy', 8
+        .attr 'r', 16
+        .attr 'fill', color
 
+      panel
+        .append 'text'
+        .attr 'x', 36
+        .attr 'y', size / 2 - 4
+        .attr 'dy', '.33em'
+        .text text
+        .style 'font-size', size + 'px'
+        .style 'fill', '#ffffff'
 
-    panel = @svg.append 'g'
-      .style 'transform', "translate(50px, #{@height - 150 + 50}px)"
-
-    size = 24
-    panel
-      .append 'circle'
-      .attr 'cx', 8
-      .attr 'cy', 8
-      .attr 'r', 16
-      .attr 'fill', '#ff3'
-
-    panel
-      .append 'text'
-      .attr 'x', 36
-      .attr 'y', size / 2 - 4
-      .attr 'dy', '.33em'
-      .text "生姜原产地"
-      .style 'font-size', size + 'px'
-      .style 'fill', '#ffffff'
-
-
-    panel = @svg.append 'g'
-      .style 'transform', "translate(50px, #{@height - 150 + 100}px)"
-
-    size = 24
-    panel
-      .append 'circle'
-      .attr 'cx', 8
-      .attr 'cy', 8
-      .attr 'r', 16
-      .attr 'fill', '#3f3'
-
-    panel
-      .append 'text'
-      .attr 'x', 36
-      .attr 'y', size / 2 - 4
-      .attr 'dy', '.33em'
-      .text "大豆原产地"
-      .style 'font-size', size + 'px'
-      .style 'fill', '#ffffff'
+    _text '#f33', '辣椒原产地', 0, if @current_product == 'lajiao' then 1 else 0.3
+    _text '#ff3', '生姜原产地', 50, if @current_product == 'shengjiang' then 1 else 0.3
+    _text '#3f3', '大豆原产地', 100, if @current_product == 'dadou' then 1 else 0.3
 
 
 
   _draw_map: ->
-    @g_map.selectAll('.country').remove()
-    countries = @g_map.selectAll('.country')
+    @areas.remove() if @areas?
+
+    @areas = @layer_map.selectAll('.country')
       .data @features
       .enter()
       .append 'path'
       .attr 'class', 'country'
       .attr 'd', @path
       .style 'stroke', @MAP_STROKE_COLOR
-      .style 'stroke-width', 2
+      .style 'stroke-width', 1
       .style 'fill', @MAP_FILL_COLOR
 
   _draw_circle: ->
-    points = @svg.append 'g'
+    @points.remove() if @points?
+    points = @points = @layer_map.append 'g'
 
     for d in data
       [x, y] = @projection [d.lat, d.long]
 
-      @g_map.append 'circle'
+      points.append 'circle'
         .attr 'class', 'chandi'
         .attr 'cx', x
         .attr 'cy', y
         .attr 'r', d.d
         .attr 'fill', =>
-          return 'rgba(255, 51, 51, 0.7)' if d.type == 1
-          return 'rgba(255, 255, 51, 0.7)' if d.type == 2
-          return 'rgba(51, 255, 51, 0.7)' if d.type == 3
+          return 'rgba(255, 51, 51, 0.7)' if d.type == 'lajiao'
+          return 'rgba(255, 255, 51, 0.7)' if d.type == 'shengjiang'
+          return 'rgba(51, 255, 51, 0.7)' if d.type == 'dadou'
+        .style 'opacity', =>
+          if d.type == @current_product then 1 else 0.05
 
+  _draw_warning: ->
     [x, y] = @projection [113.7, 34.6]
-    new CityAnimate(@, x, y, '#ff9999', 8, 'img/dayu.png').run()
+    new CityAnimate(@, x, y, '#ffffff', 8, 'img/dayu.png').run()
 
     [x, y] = @projection [106.9, 27.7]
-    new CityAnimate(@, x, y, '#ff9999', 8, 'img/dafeng.png').run()
+    new CityAnimate(@, x, y, '#ffffff', 8, 'img/dafeng.png').run()
 
 
 class CityAnimate
   constructor: (@map, @x, @y, @color, @width, @img)->
-    @g_map = @map.g_map
+    @layer_icon = @map.layer_icon
+    @layer_circles = @map.layer_circles
 
   run: ->
-    @g_map.append 'image'
-      .attr 'class', 'map-point'
+    w = 60
+    @layer_icon.append 'image'
       .attr 'xlink:href', @img
       .attr 'x', @x
       .attr 'y', @y
-      .style 'transform', 'translate(-30px, -50px)'
-      .attr 'width', 60
-      .attr 'height', 60
+      .style 'transform', "translate(-#{w / 2}px, -#{w / 2}px)"
+      .attr 'width', w
+      .attr 'height', w
 
     @wave()
 
@@ -175,22 +166,27 @@ class CityAnimate
       @circle_wave(0)
     , 500
 
+  stop: ->
+    clearInterval @timer
+
   # 在指定的位置用指定的颜色显示扩散光圈
   circle_wave: (delay)->
-    circle = @g_map.insert 'circle', '.map-point'
+    circle = @layer_circles.insert 'circle', '.map-point'
       .attr 'cx', @x
       .attr 'cy', @y
       .attr 'stroke', @color
       .attr 'stroke-width', @width
       .attr 'fill', 'transparent'
 
-    jQuery({ r: 10, o: 1 }).delay(delay).animate({ r: 100, o: 0 }
+    jQuery({ r: 10, o: 1, w: @width }).delay(delay).animate({ r: 100, o: 0.8, w: 0 }
       {
         step: (now, fx)->
           if fx.prop == 'r'
             circle.attr 'r', now
           if fx.prop == 'o'
             circle.style 'opacity', now
+          if fx.prop == 'w'
+            circle.attr 'stroke-width', now
 
         duration: 2000
         easing: 'easeOutQuad'

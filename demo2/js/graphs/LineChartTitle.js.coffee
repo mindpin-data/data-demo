@@ -23,7 +23,7 @@ class LineChartTitle extends Graph
 
     texts
       .append 'rect'
-      .attr 'x', 250 - 180
+      .attr 'x', 250 - 160
       .attr 'y', @height / 2 - 7 + 30
       .attr 'width', 30
       .attr 'height', 15
@@ -31,7 +31,7 @@ class LineChartTitle extends Graph
 
     texts
       .append 'text'
-      .attr 'x', 290 - 180
+      .attr 'x', 290 - 160
       .attr 'y', @height / 2 + 30
       .attr 'dy', '.33em'
       .text '现价'

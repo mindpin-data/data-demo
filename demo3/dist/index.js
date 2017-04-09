@@ -624,6 +624,7 @@
           _this.features = _data.features;
           _this.draw_map();
           _this.draw_heatmap();
+          _this.svg1 = _this.draw_svg().style('position', 'absolute').style('left', '0').style('top', '0');
           return _this.random_city();
         };
       })(this));
@@ -720,7 +721,7 @@
       this.y = y1;
       this.color = color1;
       this.width = width;
-      this.g_map = this.map.g_map;
+      this.g_map = this.map.svg1;
     }
 
     CityAnimate.prototype.run = function() {

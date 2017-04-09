@@ -21,8 +21,8 @@ class AreasBar extends Graph
       .style 'transform', 'translate(-30px, 70px)'
 
 
-    @draw_info panel, 'img/dayu.png', '遵义', '近期大雨', '2017-03-02'
-    @draw_info panel, 'img/dafeng.png', '郑州', '近期大风', '2017-03-02', 60
+    @draw_info panel, 'img/dayu-0.png', '遵义', '近期大雨', '2017-03-02'
+    @draw_info panel, 'img/dafeng-0.png', '郑州', '近期大风', '2017-03-02', 60
 
   draw_info: (panel, img, city, weather, date, y = 0)->
 

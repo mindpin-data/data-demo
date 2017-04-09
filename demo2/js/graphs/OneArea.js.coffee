@@ -1,13 +1,26 @@
+products = ['lajiao', 'shengjiang', 'dadou']
+products_colors = ['#f33', '#ff3', '#3f3']
+
 class OneArea extends Graph
   draw: ->
     @svg = @draw_svg()
 
-    @current_area = 'lajiao'
+    @idx = -1
+    @_draw()
 
-    @draw_flag()
+    jQuery(document).on 'data-map:next-draw', =>
+      @_draw()
+
+  _draw: ->
+    @idx += 1
+    @idx = 0 if @idx == 3
+    @current_product = products[@idx]
+    @current_product_color = products_colors[@idx]
+
+    @draw_icon()
     @draw_texts()
 
-  draw_flag: ->
+  draw_icon: ->
     @svg.select('g.flag').remove()
     flag = @svg.append('g')
       .attr 'class', 'flag'
@@ -17,11 +30,12 @@ class OneArea extends Graph
       .attr 'r', @height / 4
       .attr 'cx', 80
       .attr 'cy', @height / 2
-      .attr 'fill', 'rgb(255, 87, 87)'
+      .attr 'fill', @current_product_color
+      .style 'opacity', '0.5'
 
     flag
       .append 'image'
-      .attr 'xlink:href', "img/icon-lajiao1.png"
+      .attr 'xlink:href', "img/icon-#{@current_product}.png"
       .attr 'height', @height / 6 * 2
       .attr 'width', @height / 6 * 2
       .attr 'x', 80 - @height / 6
@@ -50,7 +64,7 @@ class OneArea extends Graph
       .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
-    texts
+    tn = texts
       .append 'text'
       .attr 'x', 110
       .attr 'y', size / 2 + 10 + y
@@ -58,6 +72,13 @@ class OneArea extends Graph
       .text number
       .style 'font-size', size + 'px'
       .style 'fill', '#ffde00'
+
+    jQuery({ n: 0 }).animate({ n: number }
+      {
+        step: (now)->
+          tn.text ~~(now * 1000) / 1000
+      }
+    )
 
     texts
       .append 'text'
@@ -69,7 +90,7 @@ class OneArea extends Graph
       .style 'fill', '#ffffff'
 
     if flag
-      texts
+      tp = texts
         .append 'text'
         .attr 'x', 270
         .attr 'y', size / 2 + 10 + y
@@ -77,6 +98,13 @@ class OneArea extends Graph
         .text "2.34‰"
         .style 'font-size', size + 'px'
         .style 'fill', '#ffffff'
+
+      jQuery({ n: 0 }).animate({ n: 2.34 }
+        {
+          step: (now)->
+            tp.text "#{~~(now * 100) / 100}‰"
+        }
+      )
 
       texts
         .append 'image'
