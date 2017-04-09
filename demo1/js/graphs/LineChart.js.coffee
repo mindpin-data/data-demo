@@ -24,25 +24,27 @@ class LineChart extends Graph
     @draw_axis()
     @draw_lines()
 
-    @time_loop()
+    jQuery(document).on 'data-map:next-draw', =>
+      @next_draw()
 
-  time_loop: ->
-    @aidx = 0
-    setInterval =>
-      @data0 = @data0.map (x)=> 
-        y = x + Math.random() * 10 - + Math.random() * 10
-        y = 0 if y < 0
-        y = 180 if y > 180
-        y
+  next_draw: ->
+    @aidx = 0 if not @aidx
+    
+    @data0 = @data0.map (x, idx)=>
+      return x if idx == 0
+      y = x + Math.random() * 10 - + Math.random() * 10
+      y = 30 if y < 30
+      y = 180 if y > 180
+      y
 
-      @data1 = @data1.map (x)=> 
-        y = x + Math.random() * 10 - + Math.random() * 10
-        y = 0 if y < 0
-        y = 180 if y > 180
-        y
+    @data1 = @data1.map (x, idx)=>
+      return x if idx == 0 
+      y = x + Math.random() * 10 - + Math.random() * 10
+      y = 30 if y < 30
+      y = 180 if y > 180
+      y
 
-      @draw_lines()
-    , 5000
+    @draw_lines()
 
   make_def: (r, g, b, id)->
     lg = @svg_defs.append('linearGradient')
@@ -103,47 +105,59 @@ class LineChart extends Graph
     @panel.selectAll('path.pre-line').remove()
     @panel.selectAll('circle').remove()
 
-    @panel.append 'path'
-      .datum [0, 0].concat @data0
-      .attr 'class', 'pre-line'
-      .attr 'd', arealine1
-      .style 'fill', 'url(#line-chart-linear1)'
 
-    @panel.append 'path'
-      .datum @data0
-      .attr 'class', 'pre-line'
-      .attr 'd', line1
-      .style 'stroke', @c1
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 2
+    _draw = (arealine, line, data, color, fill)=>
+      _data = data.map (x)-> 0
 
-    for d, idx in @data0
-      @panel.append 'circle'
-        .attr 'cx', @xscale idx
-        .attr 'cy', @yscale d
-        .attr 'r', 4
-        .attr 'fill', @c1
+      duration = 1000
 
-    @panel.append 'path'
-      .datum [0, 0].concat @data1
-      .attr 'class', 'pre-line'
-      .attr 'd', arealine2
-      .style 'fill', 'url(#line-chart-linear2)'
+      # 渐变色区域
+      area = @panel.append 'path'
+        .datum [0, 0].concat _data
+        .attr 'class', 'pre-line'
+        .attr 'd', arealine
+        .style 'fill', fill
 
-    @panel.append 'path'
-      .datum @data1
-      .attr 'class', 'pre-line'
-      .attr 'd', line1
-      .style 'stroke', @c2
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 2
+      area
+        .datum [0, 0].concat data
+        .transition()
+        .attr 'd', arealine
+        .duration duration
+        .ease d3.easeCubicOut
 
-    for d, idx in @data1
-      @panel.append 'circle'
-        .attr 'cx', @xscale idx
-        .attr 'cy', @yscale d
-        .attr 'r', 4
-        .attr 'fill', @c2
+
+      # 折线区域
+      curve = @panel.append 'path'
+        .datum _data
+        .attr 'class', 'pre-line'
+        .attr 'd', line
+        .style 'stroke', color
+        .style 'fill', 'transparent'
+        .style 'stroke-width', 2
+
+      curve
+        .datum data
+        .transition()
+        .attr 'd', line
+        .duration duration
+        .ease d3.easeCubicOut
+
+      # 折线上的点
+      _data.forEach (d, idx)=>
+        circle = @panel.append 'circle'
+          .attr 'cx', @xscale idx
+          .attr 'cy', @yscale d
+          .attr 'r', 4
+          .attr 'fill', color
+
+        circle
+          .transition()
+          .attr 'cy', @yscale data[idx]
+          .duration duration
+          .ease d3.easeCubicOut
+
+    _draw arealine1, line1, @data0, @c1, 'url(#line-chart-linear1)'
+    _draw arealine2, line1, @data1, @c2, 'url(#line-chart-linear2)'
 
 
   draw_axis: ->

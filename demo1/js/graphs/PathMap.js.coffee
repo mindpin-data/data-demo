@@ -1,10 +1,3 @@
-# areas = [
-#   'THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN'
-#   # 'MMR', 'LAO', 'KHM', 'NPL'
-#   'MMR'
-#   'KAZ', 'UKR', 'TUR'
-# ]
-
 areas = [
   'KAZ', 'KGZ', 'TJK', 'IRN', 'TUR', 'RUS', 'DEU', 'NLD'
   'VNM', 'MYS', 'IDN', 'LKA', 'IND', 'KEN', 'GRC', 'ITA'
@@ -13,8 +6,11 @@ areas = [
 ]
 
 toggle_areas = [
-  # 'THA', 'SGP', 'IND', 'VNM', 'MYS', 'IDN'
-  'THA', 'IND', 'VNM', 'MYS', 'IDN'
+  'THA' # 泰国 
+  'IND' # 印度
+  'VNM' # 越南
+  'MYS' # 马来西亚
+  'IDN' # 印尼
 ]
 
 cities_0 = [
@@ -52,11 +48,11 @@ cities_1 = [
 
 class PathMap extends Graph
   draw: ->
-  draw: ->
     @MAP_STROKE_COLOR = '#021225'
     @MAP_FILL_COLOR = '#323c48'
     @MAP_FILL_COLOR_YDYL = '#455363'
     @MAP_FILL_COLOR_CN = '#455363'
+    @MAP_FILL_COLOR_CURRENT = '#2595AE'
 
     @svg = @draw_svg()
 
@@ -69,27 +65,21 @@ class PathMap extends Graph
   load_data: ->
     d3.json 'data/world-countries.json?1', (error, _data)=>
       @features = _data.features
-      console.log @features.map (x)-> x.id
 
+      @init()
+
+      # 第一层，地图
       @draw_map()
-      # @draw_running_lines()
+      
+      # 第二层，一带一路城市和曲线（固定）
       @draw_cities()
+      @draw_ydyl_curve()
+      
+      # 第三层，当前展示国家节点
+      @draw_current_city()
 
-      @time_loop()
-
-  time_loop: ->
-    @aidx = 0
-    setInterval =>
-      @aidx += 1
-      @aidx = 0 if @aidx == toggle_areas.length
-      @current_area = toggle_areas[@aidx]
-
-      @_draw_map()
-    , 5000
-
-  draw_map: ->
+  init: ->
     # http://s.4ye.me/ziMnfK
-
     @projection = d3.geoMercator()
       .center [68, 30]
       .scale @width * 0.42
@@ -97,132 +87,169 @@ class PathMap extends Graph
 
     @path = d3.geoPath @projection
 
-    @g_map = @svg.append 'g'
+    # 地图
+    @g_layer_map = @svg.append 'g'
+    # 一带一路城市和曲线
+    @g_layer_curve = @svg.append 'g'
+    # 扩散光圈
+    @g_layer_circles = @svg.append 'g'
+    # 地图坐标
+    @g_layer_map_point = @svg.append 'g'
 
-    @_draw_map()
+    jQuery(document).on 'data-map:next-draw', =>
+      @next_draw()
 
-  _draw_map: ->
-    @g_map.selectAll('.country').remove()
-    countries = @g_map.selectAll('.country')
+
+  next_draw: ->
+    @aidx = 0 if not @aidx?
+
+    @aidx += 1
+    @aidx = 0 if @aidx == toggle_areas.length
+    @current_area = toggle_areas[@aidx]
+
+    @draw_map()
+    @draw_current_city()
+
+  draw_map: ->
+    @countries.remove() if @countries?
+    
+    @countries = @g_layer_map.selectAll('.country')
       .data @features
       .enter()
       .append 'path'
       .attr 'class', 'country'
       .attr 'd', @path
-      .style 'stroke', @MAP_STROKE_COLOR
-      .style 'stroke-width', 2
-      .style 'fill', (d)=>
-        return @MAP_FILL_COLOR_CN if d.id == @main_area
-        return 'rgba(52, 206, 233, 0.7)' if d.id == @current_area
-        return @MAP_FILL_COLOR_YDYL if @areas.indexOf(d.id) > -1
+      .attr 'stroke', @MAP_STROKE_COLOR
+      .attr 'stroke-width', 1
+      .attr 'fill', (d)=>
+        # 中国
+        return @MAP_FILL_COLOR_CN       if d.id == @main_area
+        # 当前展示国家
+        return @MAP_FILL_COLOR_CURRENT  if d.id == @current_area
+        # 一带一路国家
+        return @MAP_FILL_COLOR_YDYL     if @areas.indexOf(d.id) > -1
+        # 其他国家
         return @MAP_FILL_COLOR
 
+  draw_current_city: ->
     feature = @features.filter((x)=> x.id == @current_area)[0]
 
-    if feature
-      [x, y] = @path.centroid(feature)
-
-      new CityAnimate(@, x, y, '#ff9999', 8).run()
-
-      @g_map.selectAll('image').remove()
-      @g_map.append 'image'
-        .attr 'class', 'map-point'
-        .attr 'xlink:href', 'img/mapicon1.png'
-        .attr 'x', x
-        .attr 'y', y
-        .style 'transform', 'translate(-30px, -50px)'
-        .attr 'width', 60
-        .attr 'height', 60
+    if feature?
+      if @current_area == 'MYS'
+        [x, y] = @projection [101.8, 3.0]
+      else if @current_area == 'IDN'
+        [x, y] = @projection [106.9, -6.0]
+      else if @current_area == 'VNM'
+        [x, y] = @projection [105.9, 21.0]
+      else
+        [x, y] = @path.centroid(feature)
+      @_draw_map_point(x, y)
+      new CityAnimate(@g_layer_circles, x, y, '#ffde00', 8).run()
 
 
+  _draw_map_point: (x, y)->
+    @g_layer_map_point.selectAll('image').remove()
+    @g_layer_map_point.append 'image'
+      .attr 'class', 'map-point'
+      .attr 'xlink:href', 'img/mapicon1.png'
+      .attr 'x', x
+      .attr 'y', y
+      .style 'transform', 'translate(-30px, -50px)'
+      .attr 'width', 60
+      .attr 'height', 60
 
   draw_cities: ->
-    points = @svg#.append 'g'
+    _draw_city = (city)=>
+      circle = @g_layer_curve.append 'circle'
+        .attr 'class', 'runnin'
+        .attr 'cx', city.x
+        .attr 'cy', city.y
+        .attr 'r', 8
+        .attr 'fill', '#34cee9'
+
+      ani = ->
+        jQuery({r: 8, o: 1}).animate({r: 12, o: 0.5}
+          {
+            step: (now, fx)->
+              if fx.prop == 'r'
+                circle.attr 'r', now
+              if fx.prop == 'o'
+                circle.style 'opacity', now
+            duration: 1000
+            done: ->
+              ani()
+          }
+        )
+
+      ani()
+
 
     for city in cities_0
       [city.x, city.y] = @projection [city.long, city.lat]
-
-      points.append 'circle'
-        .attr 'class', 'runnin'
-        .attr 'cx', city.x
-        .attr 'cy', city.y
-        .attr 'r', 8
-        .attr 'fill', '#34cee9'
+      _draw_city city
 
     for city in cities_1
       [city.x, city.y] = @projection [city.long, city.lat]
+      _draw_city city
 
-      points.append 'circle'
-        .attr 'class', 'runnin'
-        .attr 'cx', city.x
-        .attr 'cy', city.y
-        .attr 'r', 8
-        .attr 'fill', '#34cee9'
-
+  draw_ydyl_curve: ->
     # 一带一路曲线
-    line1 = d3.line()
+    _draw_curve = (line, cities, color)=>
+      @g_layer_curve.append 'path'
+        .attr 'class', 'running'
+        .datum cities
+        .attr 'd', line
+        .style 'stroke', color
+        .style 'fill', 'transparent'
+        .style 'stroke-width', 4
+        .style 'stroke-dasharray', '5 10'
+        .style 'stroke-linecap', 'round'
+
+    line = d3.line()
       .x (d)=> d.x
       .y (d)=> d.y
       .curve(d3.curveCatmullRom.alpha(0.5))
 
-    points.append 'path'
-      .attr 'class', 'running'
-      .datum cities_0
-      .attr 'd', line1
-      # .style 'stroke', '#ff7c41'
-      .style 'stroke', 'rgb(205, 255, 65)'
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 5
-      .style 'stroke-dasharray', '5 10'
-      .style 'stroke-linecap', 'round'
-
-    points.append 'path'
-      .attr 'class', 'running'
-      .datum cities_1
-      .attr 'd', line1
-      .style 'stroke', '#ff7c41'
-      # .style 'stroke', 'rgb(205, 255, 65)'
-      .style 'fill', 'transparent'
-      .style 'stroke-width', 5
-      .style 'stroke-dasharray', '5 10'
-      .style 'stroke-linecap', 'round'
+    _draw_curve line, cities_0, '#cdff41'
+    _draw_curve line, cities_1, '#ff7c41'
 
 
 
 class CityAnimate
-  constructor: (@map, @x, @y, @color, @width, @img)->
-    @g_map = @map.g_map
+  constructor: (@layer, @x, @y, @color, @width, @img)->
+    #
 
   run: ->
     @wave()
 
 
-  # 在指定的位置用指定的颜色显示三个依次扩散的光圈
+  # 在指定的位置用指定的颜色显示依次扩散的光圈
   wave: ->
-    @circle_wave(0)
     @circle_wave(500)
-    @circle_wave(1000)
     @circle_wave(1500)
-    @circle_wave(2000)
+    @circle_wave(2500)
+    @circle_wave(3500)
 
   # 在指定的位置用指定的颜色显示扩散光圈
   circle_wave: (delay)->
-    circle = @g_map.insert 'circle', '.map-point'
+    circle = @layer.insert 'circle', '.map-point'
       .attr 'cx', @x
       .attr 'cy', @y
       .attr 'stroke', @color
-      .attr 'stroke-width', @width
+      # .attr 'stroke-width', @width
       .attr 'fill', 'transparent'
 
-    jQuery({ r: 10, o: 1 }).delay(delay).animate({ r: 100, o: 0 }
+    jQuery({ r: 10, o: 1, w: @width}).delay(delay).animate({ r: 100, o: 1, w: 0}
       {
         step: (now, fx)->
           if fx.prop == 'r'
             circle.attr 'r', now
           if fx.prop == 'o'
             circle.style 'opacity', now
+          if fx.prop == 'w'
+            circle.attr 'stroke-width', now
 
-        duration: 2000
+        duration: 3000
         easing: 'easeOutQuad'
         done: ->
           circle.remove()

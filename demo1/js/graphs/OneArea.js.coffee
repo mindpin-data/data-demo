@@ -38,18 +38,17 @@ class OneArea extends Graph
     @draw_flag()
     @draw_texts()
 
-    @time_loop()
+    jQuery(document).on 'data-map:next-draw', =>
+      @next_draw()
 
-  time_loop: ->
-    @aidx = 0
-    setInterval =>
-      @aidx += 1
-      @aidx = 0 if @aidx == toggle_areas.length
-      @current_area = toggle_areas[@aidx]
+  next_draw: ->
+    @aidx = 0 if not @aidx?
+    @aidx += 1
+    @aidx = 0 if @aidx == toggle_areas.length
+    @current_area = toggle_areas[@aidx]
 
-      @draw_flag()
-      @draw_texts()
-    , 5000
+    @draw_flag()
+    @draw_texts()
 
   draw_flag: ->
     @svg.select('g.flag').remove()
@@ -82,24 +81,44 @@ class OneArea extends Graph
       .style 'fill', '#ffffff'
 
     size1 = 50
-    texts
+    number = texts
       .append 'text'
       .attr 'x', 0
       .attr 'y', size / 2 + size + 40
       .attr 'dy', '.33em'
-      .text area_data[@current_area].d
+      .text 0
       .style 'font-size', size1 + 'px'
-      .style 'fill', '#ffff05'
+      .style 'fill', '#ffde00'
+
+    jQuery({d: 0}).animate({d: area_data[@current_area].d}
+      {
+        step: (now)->
+          number.text Math.floor(now)
+        duration: 1000
+      }
+    )
+
 
     size2 = 40
-    texts
+    percent = texts
       .append 'text'
       .attr 'x', 0
       .attr 'y', size / 2 + size + 34 + size1 + 30
       .attr 'dy', '.33em'
-      .text "同比 #{area_data[@current_area].p}%"
+      .text "同比 #{0.0}%"
       .style 'font-size', size2 + 'px'
       .style 'fill', '#ffffff'
+
+    jQuery({p: 0}).animate({p: area_data[@current_area].p}
+      {
+        step: (now)->
+          t = Math.floor(now * 10) / 10
+          t = "#{t}.0" if t == ~~t
+
+          percent.text "同比 #{t}%"
+        duration: 1000
+      }
+    )
 
     texts
       .append 'image'
