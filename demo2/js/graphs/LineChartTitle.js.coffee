@@ -17,7 +17,7 @@ class LineChartTitle extends Graph
       .attr 'x', 10
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
-      .text '辣椒采购价格同比（单位：万元/吨）'
+      .text '辣椒采购价格同比（单位：万元 / 吨）'
       .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 

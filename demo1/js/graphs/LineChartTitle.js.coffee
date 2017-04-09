@@ -15,7 +15,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text '销量对比（单位：万）'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     texts
@@ -32,7 +32,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text '当前销量'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     texts
@@ -49,7 +49,7 @@ class LineChartTitle extends Graph
       .attr 'y', @height / 2
       .attr 'dy', '.33em'
       .text '历史销量'
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
 BaseTile.register 'line-chart-title', LineChartTitle

@@ -30,13 +30,13 @@ class LineChart extends Graph
     @aidx = 0
     setInterval =>
       @data0 = @data0.map (x)=> 
-        y = x + Math.random() * 30 - + Math.random() * 30
+        y = x + Math.random() * 10 - + Math.random() * 10
         y = 0 if y < 0
         y = 180 if y > 180
         y
 
       @data1 = @data1.map (x)=> 
-        y = x + Math.random() * 30 - + Math.random() * 30
+        y = x + Math.random() * 10 - + Math.random() * 10
         y = 0 if y < 0
         y = 180 if y > 180
         y
@@ -44,40 +44,29 @@ class LineChart extends Graph
       @draw_lines()
     , 5000
 
+  make_def: (r, g, b, id)->
+    lg = @svg_defs.append('linearGradient')
+      .attr 'id', id
+      .attr 'x1', '0%'
+      .attr 'y1', '0%'
+      .attr 'x2', '0%'
+      .attr 'y2', '100%'
+
+    lg.append('stop')
+      .attr 'offset', '0%'
+      .attr 'stop-color', "rgba(#{r}, #{g}, #{b}, 0.2)"
+
+    lg.append('stop')
+      .attr 'offset', '100%'
+      .attr 'stop-color', "rgba(#{r}, #{g}, #{b}, 0.0)"
+
   make_defs: ->
     # https://www.w3cplus.com/svg/svg-linear-gradients.html
+    @svg_defs = @svg.append('defs')
 
-    defs = @svg.append('defs')
-    lg = defs.append('linearGradient')
-      .attr 'id', 'line-chart-linear1'
-      .attr 'x1', '0%'
-      .attr 'y1', '0%'
-      .attr 'x2', '0%'
-      .attr 'y2', '100%'
+    @make_def 205, 255, 65, 'line-chart-linear1'
+    @make_def 60, 180, 236, 'line-chart-linear2'
 
-    lg.append('stop')
-      .attr 'offset', '0%'
-      .attr 'stop-color', 'rgba(205, 255, 65, 0.5)'
-
-    lg.append('stop')
-      .attr 'offset', '100%'
-      .attr 'stop-color', 'rgba(205, 255, 65, 0.05)'
-
-
-    lg = defs.append('linearGradient')
-      .attr 'id', 'line-chart-linear2'
-      .attr 'x1', '0%'
-      .attr 'y1', '0%'
-      .attr 'x2', '0%'
-      .attr 'y2', '100%'
-
-    lg.append('stop')
-      .attr 'offset', '0%'
-      .attr 'stop-color', 'rgba(60, 180, 236, 0.5)'
-
-    lg.append('stop')
-      .attr 'offset', '100%'
-      .attr 'stop-color', 'rgba(60, 180, 236, 0.05)'
 
   draw_lines: ->
     if not @panel?
@@ -87,6 +76,7 @@ class LineChart extends Graph
     line1 = d3.line()
       .x (d, idx)=> @xscale idx
       .y (d)=> @yscale d
+      .curve(d3.curveCatmullRom.alpha(0.5))
 
     arealine1 = d3.line()
       .x (d, idx)=>

@@ -52,6 +52,12 @@ cities_1 = [
 
 class PathMap extends Graph
   draw: ->
+  draw: ->
+    @MAP_STROKE_COLOR = '#021225'
+    @MAP_FILL_COLOR = '#323c48'
+    @MAP_FILL_COLOR_YDYL = '#455363'
+    @MAP_FILL_COLOR_CN = '#455363'
+
     @svg = @draw_svg()
 
     @areas = areas
@@ -103,19 +109,20 @@ class PathMap extends Graph
       .append 'path'
       .attr 'class', 'country'
       .attr 'd', @path
-      # .style 'stroke', 'rgba(136, 204, 236, 1)'
-      .style 'stroke', 'rgba(120, 180, 208, 1)'
+      .style 'stroke', @MAP_STROKE_COLOR
       .style 'stroke-width', 2
       .style 'fill', (d)=>
-        return 'rgba(136, 204, 236, 0.7)' if d.id == @main_area
-        return 'rgba(255, 216, 40, 1)' if d.id == @current_area
-        return 'rgba(136, 204, 236, 0.5)' if @areas.indexOf(d.id) > -1
-        return 'rgba(136, 204, 236, 0.1)'
+        return @MAP_FILL_COLOR_CN if d.id == @main_area
+        return 'rgba(52, 206, 233, 0.7)' if d.id == @current_area
+        return @MAP_FILL_COLOR_YDYL if @areas.indexOf(d.id) > -1
+        return @MAP_FILL_COLOR
 
     feature = @features.filter((x)=> x.id == @current_area)[0]
 
     if feature
       [x, y] = @path.centroid(feature)
+
+      new CityAnimate(@, x, y, '#ff9999', 8).run()
 
       @g_map.selectAll('image').remove()
       @g_map.append 'image'
@@ -130,29 +137,29 @@ class PathMap extends Graph
 
 
   draw_cities: ->
-    points = @svg.append 'g'
+    points = @svg#.append 'g'
 
     for city in cities_0
       [city.x, city.y] = @projection [city.long, city.lat]
 
       points.append 'circle'
-        .attr 'class', 'running'
+        .attr 'class', 'runnin'
         .attr 'cx', city.x
         .attr 'cy', city.y
-        # .style 'r', 8
-        .attr 'fill', 'rgb(255, 193, 65)'
+        .attr 'r', 8
+        .attr 'fill', '#34cee9'
 
     for city in cities_1
       [city.x, city.y] = @projection [city.long, city.lat]
 
       points.append 'circle'
-        .attr 'class', 'running'
+        .attr 'class', 'runnin'
         .attr 'cx', city.x
         .attr 'cy', city.y
-        # .style 'r', 8
-        .attr 'fill', 'rgb(255, 193, 65)'
+        .attr 'r', 8
+        .attr 'fill', '#34cee9'
 
-
+    # 一带一路曲线
     line1 = d3.line()
       .x (d)=> d.x
       .y (d)=> d.y
@@ -166,7 +173,7 @@ class PathMap extends Graph
       .style 'stroke', 'rgb(205, 255, 65)'
       .style 'fill', 'transparent'
       .style 'stroke-width', 5
-      .style 'stroke-dasharray', '20 20'
+      .style 'stroke-dasharray', '5 10'
       .style 'stroke-linecap', 'round'
 
     points.append 'path'
@@ -177,54 +184,48 @@ class PathMap extends Graph
       # .style 'stroke', 'rgb(205, 255, 65)'
       .style 'fill', 'transparent'
       .style 'stroke-width', 5
-      .style 'stroke-dasharray', '20 20'
+      .style 'stroke-dasharray', '5 10'
       .style 'stroke-linecap', 'round'
 
-  # draw_running_lines: ->
-  #   # 贵阳
-  #   points = @svg.append 'g'
-
-  #   [x0, y0] = @projection [106.71, 26.57]
-
-  #   for area in @areas
-  #     feature = @features.filter((x)-> x.id == area)[0]
-  #     if feature
-  #       [x, y] = @path.centroid(feature)
-
-  #       points.append 'line'
-  #         .attr 'class', 'running'
-  #         .attr 'x1', x0
-  #         .attr 'y1', y0
-  #         .attr 'x2', x
-  #         .attr 'y2', y
-  #         .style 'stroke', 'rgb(255, 132, 65)'
-  #         .style 'stroke-width', 4
-  #         .style 'stroke-dasharray', '20 20'
-  #         # .style 'stroke-dashoffset', '0'
-  #         .style 'stroke-linecap', 'round'
-
-  #       points.append 'circle'
-  #         .attr 'class', 'running'
-  #         .attr 'cx', x
-  #         .attr 'cy', y
-  #         # .style 'r', 8
-  #         .attr 'fill', 'rgb(255, 193, 65)'
-
-  #       points.append 'image'
-  #         .attr 'href', 'img/mapicon1.png'
-  #         .attr 'x', x
-  #         .attr 'y', y
-  #         .style 'transform', 'translate(-30px, -50px)'
-  #         .attr 'width', 60
-  #         .attr 'height', 60
-
-  #   points.append 'circle'
-  #     .attr 'cx', x0
-  #     .attr 'cy', y0
-  #     .attr 'r', 16
-  #     .attr 'fill', 'rgb(255, 193, 65)'
 
 
+class CityAnimate
+  constructor: (@map, @x, @y, @color, @width, @img)->
+    @g_map = @map.g_map
+
+  run: ->
+    @wave()
+
+
+  # 在指定的位置用指定的颜色显示三个依次扩散的光圈
+  wave: ->
+    @circle_wave(0)
+    @circle_wave(500)
+    @circle_wave(1000)
+
+  # 在指定的位置用指定的颜色显示扩散光圈
+  circle_wave: (delay)->
+    circle = @g_map.insert 'circle', '.map-point'
+      .attr 'cx', @x
+      .attr 'cy', @y
+      .attr 'stroke', @color
+      .attr 'stroke-width', @width
+      .attr 'fill', 'transparent'
+
+    jQuery({ r: 10, o: 1 }).delay(delay).animate({ r: 100, o: 0 }
+      {
+        step: (now, fx)->
+          if fx.prop == 'r'
+            circle.attr 'r', now
+          if fx.prop == 'o'
+            circle.style 'opacity', now
+
+        duration: 2000
+        easing: 'easeOutQuad'
+        done: ->
+          circle.remove()
+      }
+    )
 
 
 BaseTile.register 'path-map', PathMap

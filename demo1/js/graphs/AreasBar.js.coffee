@@ -41,6 +41,7 @@ class AreasBar extends Graph
         .append('image')
         .attr 'href', "img/#{f}.png"
         .attr 'height', h - 30
+        .attr 'width', (h - 30) / 2 * 3
         .attr 'x', 0
         .attr 'y', h * idx + 30
 
@@ -64,7 +65,7 @@ class AreasBar extends Graph
         .attr 'x', offl + 5
         .attr 'y', h * idx + 30 + 5 + bh / 2
         .attr 'dy', '.33em'
-        .style 'font-size', th
+        .style 'font-size', th + 'px'
         .text names[idx]
 
       th1 = 30
@@ -75,7 +76,7 @@ class AreasBar extends Graph
         .attr 'x', offl + bw - 5
         .attr 'y', h * idx + 30 + 5 + bh / 2
         .attr 'dy', '.33em'
-        .style 'font-size', th1
+        .style 'font-size', th1 + 'px'
         .style 'font-weight', 'bold'
         .text amount
 

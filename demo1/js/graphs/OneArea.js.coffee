@@ -60,6 +60,7 @@ class OneArea extends Graph
       .append 'image'
       .attr 'href', "img/#{@current_area}.png"
       .attr 'height', @height - 60
+      .attr 'width', (@height - 60) / 2 * 3
       .attr 'x', 0
       .attr 'y', 30
 
@@ -77,7 +78,7 @@ class OneArea extends Graph
       .attr 'y', size / 2 + 10
       .attr 'dy', '.33em'
       .text "#{area_data[@current_area].n}销量"
-      .style 'font-size', size
+      .style 'font-size', size + 'px'
       .style 'fill', '#ffffff'
 
     size1 = 50
@@ -87,7 +88,7 @@ class OneArea extends Graph
       .attr 'y', size / 2 + size + 40
       .attr 'dy', '.33em'
       .text area_data[@current_area].d
-      .style 'font-size', size1
+      .style 'font-size', size1 + 'px'
       .style 'fill', '#ffff05'
 
     size2 = 40
@@ -97,7 +98,7 @@ class OneArea extends Graph
       .attr 'y', size / 2 + size + 34 + size1 + 30
       .attr 'dy', '.33em'
       .text "同比 #{area_data[@current_area].p}%"
-      .style 'font-size', size2
+      .style 'font-size', size2 + 'px'
       .style 'fill', '#ffffff'
 
     texts
@@ -106,6 +107,7 @@ class OneArea extends Graph
       .attr 'y', size / 2 + size + 34 + size1 + 30 - size2 / 2
       .attr 'href', 'img/upicon1.png'
       .attr 'height', size2
+      .attr 'width', size2
 
 
 
