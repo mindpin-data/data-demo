@@ -49,10 +49,18 @@ cities_1 = [
 class PathMap extends Graph
   draw: ->
     @MAP_STROKE_COLOR = '#021225'
+    
+    # @MAP_FILL_COLOR = '#323c48'
     @MAP_FILL_COLOR = '#323c48'
-    @MAP_FILL_COLOR_YDYL = '#455363'
-    @MAP_FILL_COLOR_CN = '#455363'
-    @MAP_FILL_COLOR_CURRENT = '#2595AE'
+
+    # @MAP_FILL_COLOR_YDYL = '#455363'
+    @MAP_FILL_COLOR_YDYL = '#84a5ce'
+
+    # @MAP_FILL_COLOR_CN = '#455363'
+    @MAP_FILL_COLOR_CN = @MAP_FILL_COLOR_YDYL
+
+    # @MAP_FILL_COLOR_CURRENT = '#2595AE'
+    @MAP_FILL_COLOR_CURRENT = '#ffd828'
 
     @svg = @draw_svg()
 
@@ -151,7 +159,7 @@ class PathMap extends Graph
     @g_layer_map_point.selectAll('image').remove()
     @g_layer_map_point.append 'image'
       .attr 'class', 'map-point'
-      .attr 'xlink:href', 'img/mapicon1.png'
+      .attr 'xlink:href', 'img/mapicon.png'
       .attr 'x', x
       .attr 'y', y
       .style 'transform', 'translate(-30px, -50px)'
