@@ -1,9 +1,54 @@
-areas = [
-  'KAZ', 'KGZ', 'TJK', 'IRN', 'TUR', 'RUS', 'DEU', 'NLD'
-  'VNM', 'MYS', 'IDN', 'LKA', 'IND', 'KEN', 'GRC', 'ITA'
+# ydyl_areas = [
+#   'KAZ', 'KGZ', 'TJK', 'IRN', 'TUR', 'RUS', 'DEU', 'NLD'
+#   'VNM', 'MYS', 'IDN', 'LKA', 'IND', 'KEN', 'GRC', 'ITA'
 
-  'THA', 'SGP'
+#   'THA', 'SGP'
+# ]
+
+# 根据 https://wenku.baidu.com/view/3e592e4b767f5acfa1c7cd51.html
+
+ydyl_areas = [
+  # 中国、蒙古、俄罗斯
+  'CHN', 'RUS', 'MNG'
+
+  # 东南亚11国：
+  #   印度尼西亚、泰国、马来西亚、越南、**新加坡、
+  #   菲律宾、缅甸、柬埔寨、老挝、文莱、东帝汶；
+  'IDN', 'THA', 'MYS', 'VNM', 'SGP'
+  'PHL', 'MMR', 'KHM', 'LAO', 'BRN', 'TLS'
+
+  # 南亚8国：
+  #   印度、巴基斯坦、孟加拉国、斯里兰卡、阿富汗、
+  #   尼泊尔、**马尔代夫、不丹；
+  'IND', 'PAK', 'BGD', 'LKA', 'AFG'
+  'NPL', 'MDV', 'BTN'
+
+  # 西亚北非16国：
+  #   沙特阿拉伯、阿联酋、阿曼、伊朗、土耳其、
+  #   以色列、埃及、科威特、伊拉克、卡塔尔、
+  #   约旦、黎巴嫩、**巴林、也门共和国、叙利亚、巴勒斯坦；
+  'SAU', 'ARE', 'OMN', 'IRN', 'TUR'
+  'ISR', 'EGY', 'KWT', 'IRQ', 'QAT'
+  'JOR', 'LBN', 'BHR', 'YEM', 'SYR', 'PSE'
+
+  # 中东欧16国：
+  #   波兰、罗马尼亚、捷克共和国、斯洛伐克、保加利亚、
+  #   匈牙利、拉脱维亚、立陶宛、斯洛文尼亚、爱沙尼亚、
+  #   克罗地亚、阿尔巴尼亚、塞尔维亚、马其顿、波黑、黑山；
+  'POL', 'ROU', 'CZE', 'SVK', 'BGR'
+  'HUN', 'LVA', 'LTU', 'SVN', 'EST'
+  'HRV', 'ALB', 'SRB', 'MKD', 'BIH', 'MNE'
+
+  # 中亚5国：
+  #   哈萨克斯坦、乌兹别克斯坦、土库曼斯坦、吉尔吉斯斯坦、塔吉克斯坦；
+  'KAZ', 'UZB', 'TKM', 'KGZ', 'TJK'
+
+  # 独联体其他6国：
+  #   乌克兰、白俄罗斯、克鲁吉亚、阿塞拜疆、亚美尼亚、摩尔多瓦；
+  'UKR', 'BLR', 'GEO', 'AZE', 'ARM', 'MDA'
 ]
+
+# ydyl_areas = ['BRN']
 
 toggle_areas = [
   'THA' # 泰国 
@@ -64,7 +109,7 @@ class PathMap extends Graph
 
     @svg = @draw_svg()
 
-    @areas = areas
+    @areas = ydyl_areas
     @current_area = 'THA'
     @main_area = 'CHN'
 
@@ -73,6 +118,13 @@ class PathMap extends Graph
   load_data: ->
     d3.json 'data/world-countries.json?1', (error, _data)=>
       @features = _data.features
+
+      ydyls = for code in @areas
+        area = @features.filter((x)-> x.id == code)[0]
+        area.id if area?
+
+      console.log ydyls
+
 
       @init()
 

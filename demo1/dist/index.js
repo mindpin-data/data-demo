@@ -604,11 +604,11 @@
 }).call(this);
 
 (function() {
-  var CityAnimate, PathMap, areas, cities_0, cities_1, toggle_areas,
+  var CityAnimate, PathMap, cities_0, cities_1, toggle_areas, ydyl_areas,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  areas = ['KAZ', 'KGZ', 'TJK', 'IRN', 'TUR', 'RUS', 'DEU', 'NLD', 'VNM', 'MYS', 'IDN', 'LKA', 'IND', 'KEN', 'GRC', 'ITA', 'THA', 'SGP'];
+  ydyl_areas = ['CHN', 'RUS', 'MNG', 'IDN', 'THA', 'MYS', 'VNM', 'SGP', 'PHL', 'MMR', 'KHM', 'LAO', 'BRN', 'TLS', 'IND', 'PAK', 'BGD', 'LKA', 'AFG', 'NPL', 'MDV', 'BTN', 'SAU', 'ARE', 'OMN', 'IRN', 'TUR', 'ISR', 'EGY', 'KWT', 'IRQ', 'QAT', 'JOR', 'LBN', 'BHR', 'YEM', 'SYR', 'PSE', 'POL', 'ROU', 'CZE', 'SVK', 'BGR', 'HUN', 'LVA', 'LTU', 'SVN', 'EST', 'HRV', 'ALB', 'SRB', 'MKD', 'BIH', 'MNE', 'KAZ', 'UZB', 'TKM', 'KGZ', 'TJK', 'UKR', 'BLR', 'GEO', 'AZE', 'ARM', 'MDA'];
 
   toggle_areas = ['THA', 'IND', 'VNM', 'MYS', 'IDN'];
 
@@ -738,7 +738,7 @@
       this.MAP_FILL_COLOR_CN = this.MAP_FILL_COLOR_YDYL;
       this.MAP_FILL_COLOR_CURRENT = '#ffd828';
       this.svg = this.draw_svg();
-      this.areas = areas;
+      this.areas = ydyl_areas;
       this.current_area = 'THA';
       this.main_area = 'CHN';
       return this.load_data();
@@ -747,7 +747,26 @@
     PathMap.prototype.load_data = function() {
       return d3.json('data/world-countries.json?1', (function(_this) {
         return function(error, _data) {
+          var area, code, ydyls;
           _this.features = _data.features;
+          ydyls = (function() {
+            var i, len, ref, results;
+            ref = this.areas;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+              code = ref[i];
+              area = this.features.filter(function(x) {
+                return x.id === code;
+              })[0];
+              if (area != null) {
+                results.push(area.id);
+              } else {
+                results.push(void 0);
+              }
+            }
+            return results;
+          }).call(_this);
+          console.log(ydyls);
           _this.init();
           _this.draw_map();
           _this.draw_cities();
